@@ -1,8 +1,7 @@
-
 import { WordPressPost, WordPressSiteSettings, WordPressCategory } from './types';
 import { defaultSiteSettings, defaultCategories, generateMockPosts } from './mockData';
 
-const WP_API_BASE_URL = "https://yourdomain.com/wp-json/wp/v2";
+const WP_API_BASE_URL = "https://blog.otstapki.bg/wp-json/wp/v2";
 
 // Function to fetch posts from WordPress
 export const fetchPosts = async (categoryId?: number, page: number = 1): Promise<WordPressPost[]> => {
