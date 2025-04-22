@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Book } from "lucide-react";
+import { Home, Book, Box } from "lucide-react";
 
 const MobileBottomNav = () => {
   const location = useLocation();
@@ -33,13 +33,10 @@ const MobileBottomNav = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="flex flex-col items-center text-xs text-white hover:text-green-500"
+        aria-label="Отстъпки Бг"
       >
-        <img
-          src="/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
-          alt="Отстъпки Бг"
-          className="w-6 h-6 mb-1 object-contain"
-          loading="lazy"
-        />
+        <Box size={24} strokeWidth={1.8} className="mb-1 text-green-500" />
+        {/* Tекст като надпис под иконата */}
         Отстъпки Бг
       </a>
     </nav>

@@ -3,6 +3,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWordPressSiteSettings } from '@/services/wordpressApi';
 import MobileBottomNav from './MobileBottomNav';
+import { Box } from 'lucide-react';
 
 const SiteHeader = () => {
   const location = useLocation();
@@ -12,12 +13,13 @@ const SiteHeader = () => {
       logo: "/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
     }
   } = useWordPressSiteSettings();
+
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <>
-      <header className="bg-black border-b border-green-400/20 py-0">
-        <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-2">
+      <header className="bg-black border-b border-green-400/20 py-2">
+        <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-4">
           <Link
             to="/"
             className="flex items-center gap-2 mb-4 md:mb-0 justify-center md:justify-start w-full md:w-auto"
@@ -25,8 +27,7 @@ const SiteHeader = () => {
             <img
               src={siteSettings.logo}
               alt={`${siteSettings.title} Лого`}
-              className="h-13 max-w-[48px]"
-              style={{ marginRight: 0 }}
+              className="h-16 w-auto max-w-[56px] md:max-w-[64px] object-contain"
             />
           </Link>
 
@@ -52,20 +53,16 @@ const SiteHeader = () => {
             >
               Блог
             </Link>
-            {/* New external button */}
+            {/* New external button with icon */}
             <a
               href="https://www.otstapki.bg"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4 flex items-center gap-2"
+              aria-label="Отстъпки Бг"
             >
-              <img
-                src="/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
-                alt="Отстъпки Бг"
-                className="w-5 h-5 object-contain"
-                loading="lazy"
-              />
-              Отстъпки Бг
+              <Box size={20} strokeWidth={1.8} className="text-green-500" />
+              <span className="hidden md:inline">Отстъпки Бг</span>
             </a>
           </nav>
         </div>
