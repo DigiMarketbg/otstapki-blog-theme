@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Sparkles, BadgePercent, Percent, BadgeDollarSign } from "lucide-react";
-
 const HeroSection = () => {
-  return (
-    <section className="py-24 bg-gradient-to-b from-black to-green-950/10 relative overflow-hidden">
+  return <section className="py-24 bg-gradient-to-b from-black to-green-950/10 relative overflow-hidden bg-neutral-950">
       {/* Dark overlay behind floating elements for better contrast */}
       <div className="absolute inset-0 bg-black/60 pointer-events-none" />
 
@@ -56,13 +53,10 @@ const HeroSection = () => {
           <span className="text-white">Открий най-добрите </span>
           <span className="text-green-400">намаления</span>
         </h1>
-        <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto mb-8">
+        <p className="text-lg md:text-xl max-w-3xl mx-auto mb-8 text-green-600">
           Най-добрите отстъпки и промоции около теб – избери и спести!
         </p>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
-
