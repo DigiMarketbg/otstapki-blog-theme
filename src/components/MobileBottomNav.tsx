@@ -36,10 +36,10 @@ const MobileBottomNav = () => {
         aria-label="Отстъпки Бг"
       >
         <img
-          src="/lovable-uploads/3bf85988-e296-42c8-81ff-abe0ad0d89db.png"
+          src="/lovable-uploads/b3ffb991-c5ff-4f25-bcd9-5d112b396fba.png"
           alt="Отстъпки Бг"
           className="mb-1 w-6 h-6 object-contain"
-          style={{ filter: "invert(56%) sepia(90%) saturate(443%) hue-rotate(86deg) brightness(92%) contrast(87%)" }}
+          style={{ filter: "none" }}
         />
         Отстъпки Бг
       </a>
