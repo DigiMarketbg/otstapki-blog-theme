@@ -1,74 +1,35 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  useWordPressPosts, 
-  useWordPressCategories
-} from "@/services/api/hooks";
 import { useToast } from "@/hooks/use-toast";
-import PostsGrid from './PostsGrid';
 
 const PostsSection = () => {
-  const [activeCategory, setActiveCategory] = useState("all");
-  const [animatingPosts, setAnimatingPosts] = useState(false);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const { toast } = useToast();
 
-  // Fetch posts and categories
-  const { data: postsData, isLoading: postsLoading, error: postsError } = useWordPressPosts();
-  const { data: categoriesData = [], isLoading: categoriesLoading } = useWordPressCategories();
-
-  // Extract posts from infinite query data or use empty array
-  const posts = postsData?.pages?.flatMap(page => page.posts) || [];
-
-  console.log("PostsSection rendered with", posts.length, "posts");
-
-  // Format categories for display with "All" category
-  const categories = [
-    { id: 0, name: "Всички", slug: "all" },
-    ...categoriesData.map(cat => ({ 
-      id: cat.id, 
-      name: cat.name, 
-      slug: cat.slug 
-    })),
-  ];
-
-  // Filter posts by category
-  const [visiblePosts, setVisiblePosts] = useState([]);
-
-  // When posts or active category changes, filter posts
   useEffect(() => {
-    if (!posts) {
-      setVisiblePosts([]);
-      return;
-    }
-    
-    setAnimatingPosts(true);
-    
-    setTimeout(() => {
-      if (activeCategory === "all") {
-        setVisiblePosts(posts);
-      } else {
-        const categoryId = categories.find(cat => cat.slug === activeCategory)?.id;
-        setVisiblePosts(posts.filter(post => 
-          categoryId ? post.categories.includes(categoryId) : true
-        ));
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("https://blog.otstapki.bg/wp-json/wp/v2/posts?per_page=5&status=publish&_embed");
+        if (!res.ok) {
+          throw new Error(`Failed to fetch posts: ${res.status}`);
+        }
+        const data = await res.json();
+        setPosts(data);
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Грешка при зареждане на статиите",
+          description: "Моля, опитайте по-късно или свържете се с администратора."
+        });
+      } finally {
+        setLoading(false);
       }
-      setAnimatingPosts(false);
-    }, 300);
-  }, [posts, activeCategory, categories]);
-
-  // Show errors
-  useEffect(() => {
-    if (postsError) {
-      toast({
-        variant: "destructive",
-        title: "Грешка при зареждане на статиите",
-        description: "Моля, опитайте по-късно или свържете се с администратора."
-      });
-    }
-  }, [postsError, toast]);
+    };
+    fetchPosts();
+  }, [toast]);
 
   return (
     <section className="py-16 bg-gradient-to-t from-black via-green-950/5 to-black">
@@ -83,38 +44,34 @@ const PostsSection = () => {
           </p>
         </div>
 
-        {/* Табове за категории */}
-        <Tabs defaultValue="all" className="w-full mb-8" onValueChange={setActiveCategory}>
-          <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
-            <TabsList className="bg-gray-900/70 p-1">
-              {categories.map((category) => (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.slug}
-                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=inactive]:text-gray-400"
-                >
-                  {category.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
+        {loading && (
+          <div role="status" aria-live="polite" className="text-white text-center">Зареждане на статии...</div>
+        )}
 
-          {/* Съдържание за всеки таб */}
-          <TabsContent value={activeCategory} className="mt-0">
-            <PostsGrid 
-              posts={visiblePosts} 
-              isLoading={postsLoading && visiblePosts.length === 0} 
-              animating={animatingPosts} 
-            />
-          </TabsContent>
-        </Tabs>
+        {!loading && posts.length === 0 && (
+          <p className="text-gray-400 text-center">Няма намерени статии.</p>
+        )}
 
-        <div className="text-center mt-10">
-          <Link to="/blog">
-            <Button className="bg-green-500 hover:bg-green-600 text-white">
-              Всички статии
-            </Button>
-          </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.map((post) => (
+            <article key={post.id} className="bg-gray-900/60 border border-gray-800 rounded-lg p-6 flex flex-col justify-between">
+              <h3 className="text-xl font-semibold text-white mb-2">{post.title.rendered}</h3>
+              <div 
+                className="text-gray-400 mb-4 line-clamp-3"
+                dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} 
+              />
+              <a 
+                href={post.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-block mt-auto"
+              >
+                <Button className="bg-green-500 hover:bg-green-600 text-white">
+                  Прочети
+                </Button>
+              </a>
+            </article>
+          ))}
         </div>
       </div>
     </section>
