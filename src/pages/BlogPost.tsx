@@ -1,19 +1,33 @@
+
 import React from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { useWordPressPost, useWordPressPosts, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { 
+  useWordPressPost, 
+  useWordPressPosts, 
+  useWordPressCategories,
+  formatWordPressDate, 
+  getCategoryFromPost, 
+  getFeaturedImageUrl,
+  defaultCategories
+} from "@/services/wordpressApi";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Clock, User, Loader2 } from 'lucide-react';
+import { ArrowLeft, Clock, Loader2 } from 'lucide-react';
 
 const BlogPost = () => {
   const { id, seoTitle } = useParams<{ id: string, seoTitle?: string }>();
   const postId = parseInt(id || '0');
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Fetch categories
+  const { data: categoriesData = [] } = useWordPressCategories();
+  
+  // Get categories from real data or fallback to default
+  const categories = categoriesData.length > 0 ? categoriesData : defaultCategories;
 
   // Fetch the current post
   const { 
@@ -23,7 +37,8 @@ const BlogPost = () => {
   } = useWordPressPost(postId);
 
   // Fetch related posts (in a real implementation, you'd use tags or categories)
-  const { data: relatedPosts = [] } = useWordPressPosts();
+  const { data } = useWordPressPosts();
+  const relatedPosts = data?.pages[0]?.posts || [];
 
   // Handle loading and errors
   React.useEffect(() => {
@@ -232,9 +247,14 @@ const BlogPost = () => {
             <div>
               <h3 className="text-white font-bold mb-4">Категории</h3>
               <ul className="space-y-2">
-                {categories.filter(cat => cat !== "Всички").map((category, index) => (
-                  <li key={index}>
-                    <a href="#" className="hover:text-green-500 transition">{category}</a>
+                {categories.filter(cat => cat.name !== "Всички").map((category) => (
+                  <li key={category.id}>
+                    <Link 
+                      to={`/blog/category/${category.slug}`}
+                      className="hover:text-green-500 transition"
+                    >
+                      {category.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -268,7 +288,8 @@ const BlogPost = () => {
       </footer>
 
       {/* Стилове за WordPress съдържание */}
-      <style jsx global>{`
+      <style>
+        {`
         .post-content {
           color: #e5e7eb;
         }
@@ -352,7 +373,8 @@ const BlogPost = () => {
           color: #9ca3af;
           margin-top: 0.5rem;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

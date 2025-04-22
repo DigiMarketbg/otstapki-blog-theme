@@ -6,7 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Search, Loader2 } from 'lucide-react';
-import { useWordPressPosts, useWordPressCategories, stripHtml, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { 
+  useWordPressPosts, 
+  useWordPressCategories, 
+  stripHtml, 
+  formatWordPressDate, 
+  getCategoryFromPost, 
+  getFeaturedImageUrl,
+  defaultCategories
+} from "@/services/wordpressApi";
 import { useToast } from "@/hooks/use-toast";
 
 const Blog = () => {
@@ -23,7 +31,7 @@ const Blog = () => {
   
   // Fetch posts for the selected category
   const { 
-    data: posts = [],
+    data, 
     isLoading: postsLoading, 
     error: postsError,
     fetchNextPage,
@@ -31,10 +39,13 @@ const Blog = () => {
     isFetchingNextPage
   } = useWordPressPosts(selectedCategoryId);
   
+  // Flatten posts from all pages
+  const posts = data?.pages.flatMap(page => page.posts) || [];
+  
   // Categories for display in the UI
   const categories = [
     { id: 0, name: "Всички", slug: "all" },
-    ...(categoriesData || []).map(cat => ({ 
+    ...(categoriesData.length > 0 ? categoriesData : defaultCategories).map(cat => ({ 
       id: cat.id, 
       name: cat.name, 
       slug: cat.slug 
@@ -156,7 +167,7 @@ const Blog = () => {
             }
           </h2>
           
-          {postsLoading ? (
+          {postsLoading && posts.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="bg-gray-900 border-gray-800 animate-pulse">
@@ -233,7 +244,7 @@ const Blog = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-10 border-l-4 border-green-500 pl-4">Популярни публикации</h2>
           
-          {postsLoading ? (
+          {postsLoading && popularPosts.length === 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {[...Array(2)].map((_, i) => (
                 <Card key={i} className="bg-gray-900 border-gray-800 animate-pulse">
@@ -360,9 +371,14 @@ const Blog = () => {
             <div>
               <h3 className="text-white font-bold mb-4">Категории</h3>
               <ul className="space-y-2">
-                {categories.filter(cat => cat !== "Всички").map((category, index) => (
-                  <li key={index}>
-                    <a href="#" className="hover:text-green-500 transition">{category}</a>
+                {categories.filter(cat => cat.name !== "Всички").map((category) => (
+                  <li key={category.id}>
+                    <Link 
+                      to={category.slug === "all" ? "/blog" : `/blog/category/${category.slug}`}
+                      className="hover:text-green-500 transition"
+                    >
+                      {category.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
