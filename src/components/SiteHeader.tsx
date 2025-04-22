@@ -13,7 +13,7 @@ const SiteHeader = () => {
   return <header className="bg-black py-4 border-b border-green-500/20">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
-          <img src={siteSettings.logo} alt={`${siteSettings.title} Лого`} className="h-15" />
+          <img src={siteSettings.logo} alt={`${siteSettings.title} Лого`} className="h-13" />
           
         </Link>
         
