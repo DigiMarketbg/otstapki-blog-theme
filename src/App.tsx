@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +19,8 @@ const queryClient = new QueryClient({
   },
 });
 
+import PostBySlug from "./pages/PostBySlug";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/blog/category/:category" element={<Blog />} />
           <Route path="/blog/:id" element={<BlogPost />} />
           <Route path="/blog/:id/:seoTitle" element={<BlogPost />} />
+          <Route path="/post/:slug" element={<PostBySlug />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
