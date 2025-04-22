@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -90,7 +89,7 @@ const BlogPost = () => {
               {/* Category */}
               <Link 
                 to={`/blog/category/${
-                  post._embedded?.['wp:term']?.[0]?.[0]?.slug || categories[0]?.slug
+                  post._embedded?.['wp:term']?.[0]?.[0]?.slug || (categories[0]?.slug || '')
                 }`}
                 className="inline-block"
               >
@@ -192,7 +191,7 @@ const BlogPost = () => {
       </div>
 
       {/* Add some global styles for WordPress content */}
-      <style global={true}>
+      <style>
         {`
           .prose img {
             border-radius: 0.5rem;
