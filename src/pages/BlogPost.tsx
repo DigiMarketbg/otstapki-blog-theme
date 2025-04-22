@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, User } from 'lucide-react';
+import { Calendar, Clock, Percent, Tag, User } from 'lucide-react';
 
 // Примерни блог статии
 const blogPosts = [
@@ -53,6 +53,7 @@ const blogPosts = [
     date: "21 април, 2025",
     readTime: "7 мин",
     imageUrl: "/placeholder.svg",
+    discountPercentage: "20%",
     relatedPosts: [2, 5, 3]
   },
   {
@@ -65,6 +66,7 @@ const blogPosts = [
     date: "18 април, 2025",
     readTime: "5 мин",
     imageUrl: "/placeholder.svg",
+    discountPercentage: "30%",
     relatedPosts: [1, 4, 5]
   },
   {
@@ -77,6 +79,7 @@ const blogPosts = [
     date: "15 април, 2025",
     readTime: "8 мин",
     imageUrl: "/placeholder.svg",
+    discountPercentage: "15%",
     relatedPosts: [2, 5, 1]
   },
   {
@@ -89,6 +92,7 @@ const blogPosts = [
     date: "10 април, 2025",
     readTime: "6 мин",
     imageUrl: "/placeholder.svg",
+    discountPercentage: "25%",
     relatedPosts: [1, 2, 3]
   },
   {
@@ -101,9 +105,21 @@ const blogPosts = [
     date: "5 април, 2025",
     readTime: "4 мин",
     imageUrl: "/placeholder.svg",
+    discountPercentage: "10%",
     relatedPosts: [1, 2, 3]
   },
 ];
+
+// Функция за създаване на SEO URL
+const createSeoUrl = (title) => {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\sа-яА-Я]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-а-яА-Я]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+};
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
@@ -116,6 +132,9 @@ const BlogPost = () => {
   const relatedArticles = post.relatedPosts.map(id => 
     blogPosts.find(p => p.id === id)
   ).filter(Boolean);
+
+  // Генериране на SEO URL за статията
+  const seoUrl = createSeoUrl(post.title);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -150,11 +169,22 @@ const BlogPost = () => {
               {" > "}
               <Link to={`/blog/category/${post.category}`} className="hover:text-green-500 transition">{post.category}</Link>
               {" > "}
-              <span className="text-white">{post.title}</span>
+              <span className="text-white">{seoUrl}</span>
             </div>
             
             {/* Заглавие и мета информация */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{post.title}</h1>
+            
+            {/* Дисконт етикет - нова функционалност */}
+            <div className="mb-6">
+              <div className="inline-block bg-gradient-to-r from-green-500 to-green-700 px-4 py-2 rounded-lg animate-pulse transform rotate-2 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <Percent className="h-5 w-5 text-white" />
+                  <span className="text-white font-bold">Спести до {post.discountPercentage}</span>
+                  <Tag className="h-5 w-5 text-white" />
+                </div>
+              </div>
+            </div>
             
             <div className="flex flex-wrap gap-4 mb-8">
               <Badge variant="outline" className="text-green-400 border-green-400/30 flex items-center gap-1">
@@ -169,12 +199,16 @@ const BlogPost = () => {
             </div>
             
             {/* Основно изображение */}
-            <div className="mb-8 rounded-xl overflow-hidden">
+            <div className="mb-8 rounded-xl overflow-hidden relative">
               <img 
                 src={post.imageUrl} 
                 alt={post.title} 
                 className="w-full h-auto object-cover"
               />
+              {/* Ефект за намаление върху изображението */}
+              <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full font-bold transform rotate-12 shadow-lg border-2 border-white">
+                -{post.discountPercentage}
+              </div>
             </div>
             
             {/* Съдържание на статията */}
@@ -264,13 +298,17 @@ const BlogPost = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {relatedArticles.map((relatedPost) => (
-                  <Card key={relatedPost?.id} className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden">
-                    <div className="h-48 overflow-hidden">
+                  <Card key={relatedPost?.id} className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden group">
+                    <div className="h-48 overflow-hidden relative">
                       <img 
                         src={relatedPost?.imageUrl} 
                         alt={relatedPost?.title} 
-                        className="w-full h-full object-cover transition hover:scale-105"
+                        className="w-full h-full object-cover transition group-hover:scale-105"
                       />
+                      {/* Ефект за намаление върху изображението на свързаната статия */}
+                      <div className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full font-bold transform rotate-12 shadow-lg border border-white text-sm">
+                        -{relatedPost?.discountPercentage}
+                      </div>
                     </div>
                     <CardHeader>
                       <div className="flex justify-between items-center mb-2">
@@ -280,17 +318,18 @@ const BlogPost = () => {
                         <span className="text-gray-400 text-sm">{relatedPost?.date}</span>
                       </div>
                       <CardTitle className="text-xl hover:text-green-500 transition">
-                        <Link to={`/blog/${relatedPost?.id}`}>{relatedPost?.title}</Link>
+                        <Link to={`/blog/${relatedPost?.id}/${createSeoUrl(relatedPost?.title || '')}`}>{relatedPost?.title}</Link>
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <CardDescription className="text-gray-400">{relatedPost?.excerpt}</CardDescription>
                     </CardContent>
                     <CardFooter className="flex justify-between">
-                      <Link to={`/blog/${relatedPost?.id}`}>
-                        <Button variant="link" className="text-green-500 hover:text-green-400 p-0">
-                          Прочети повече
-                        </Button>
+                      <Link to={`/blog/${relatedPost?.id}/${createSeoUrl(relatedPost?.title || '')}`}>
+                        <div className="text-green-500 hover:text-green-400 flex items-center gap-2">
+                          <Percent className="h-4 w-4" />
+                          <span>Виж намалението</span>
+                        </div>
                       </Link>
                     </CardFooter>
                   </Card>
