@@ -8,8 +8,8 @@ const SiteHeader = () => {
   const location = useLocation();
   const {
     data: siteSettings = {
-      title: "Отстъпки БГ",
-      logo: "/lovable-uploads/6cbb2d8a-6ad4-48cf-bdd4-443bd16a25c8.png"
+      title: "Отстъпки Бг",
+      logo: "/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
     }
   } = useWordPressSiteSettings();
   const isActive = (path: string) => location.pathname === path;
@@ -17,7 +17,7 @@ const SiteHeader = () => {
   return (
     <>
       <header className="bg-black border-b border-green-400/20 py-0">
-        <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-[8px]">
+        <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-2">
           <Link
             to="/"
             className="flex items-center gap-2 mb-4 md:mb-0 justify-center md:justify-start w-full md:w-auto"
@@ -25,7 +25,7 @@ const SiteHeader = () => {
             <img
               src={siteSettings.logo}
               alt={`${siteSettings.title} Лого`}
-              className="h-13 max-w-[120px] md:max-w-none"
+              className="h-13 max-w-[48px]"
               style={{ marginRight: 0 }}
             />
           </Link>
@@ -57,9 +57,15 @@ const SiteHeader = () => {
               href="https://www.otstapki.bg"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4"
+              className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4 flex items-center gap-2"
             >
-              Otstapki.bg
+              <img
+                src="/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
+                alt="Отстъпки Бг"
+                className="w-5 h-5 object-contain"
+                loading="lazy"
+              />
+              Отстъпки Бг
             </a>
           </nav>
         </div>
