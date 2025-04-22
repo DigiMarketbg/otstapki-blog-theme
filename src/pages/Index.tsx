@@ -7,71 +7,61 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronRight, Clock, User } from 'lucide-react';
 import { useIsMobile } from "@/hooks/use-mobile";
-
-// Примерни блог статии (същите като в Blog.tsx)
-const blogPosts = [
-  {
-    id: 1,
-    title: "10 начина да спестите от месечните разходи",
-    excerpt: "Открийте изпитани стратегии за намаляване на ежедневните разходи без да жертвате качеството на живот.",
-    category: "Съвети за пестене",
-    date: "21 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 2,
-    title: "Най-добрите намаления в хранителните вериги този месец",
-    excerpt: "Преглед на топ промоциите в големите хранителни вериги, които не трябва да пропускате през април.",
-    category: "Промоции",
-    date: "18 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 3,
-    title: "Как да намерите най-изгодните оферти за техника",
-    excerpt: "Експертни съвети за откриване на най-добрите намаления при покупка на смартфони, компютри и домакински уреди.",
-    category: "Технологии",
-    date: "15 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 4,
-    title: "Сезонни намаления - какво да купувате през пролетта",
-    excerpt: "Разберете кои продукти са най-изгодни за покупка през пролетния сезон и защо.",
-    category: "Сезонни оферти",
-    date: "10 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-];
-
-// Категории за филтриране
-const categories = [
-  "Всички",
-  "Промоции",
-  "Съвети за пестене",
-  "Технологии",
-  "Сезонни оферти",
-];
+import { useWordPressPosts, useWordPressCategories, stripHtml, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const isMobile = useIsMobile();
-  const [activeCategory, setActiveCategory] = useState("Всички");
-  const [visiblePosts, setVisiblePosts] = useState(blogPosts);
+  const [activeCategory, setActiveCategory] = useState("all");
   const [animatingPosts, setAnimatingPosts] = useState(false);
+  const { toast } = useToast();
 
-  // Филтриране на статии според избраната категория
+  // Fetch posts and categories
+  const { data: posts = [], isLoading: postsLoading, error: postsError } = useWordPressPosts();
+  const { data: categoriesData = [], isLoading: categoriesLoading } = useWordPressCategories();
+
+  // Format categories for display
+  const categories = [
+    { id: 0, name: "Всички", slug: "all" },
+    ...(categoriesData || []).map(cat => ({ 
+      id: cat.id, 
+      name: cat.name, 
+      slug: cat.slug 
+    })),
+  ];
+
+  // Filter posts by category
+  const [visiblePosts, setVisiblePosts] = useState(posts);
+
+  // When posts or active category changes, filter posts
   useEffect(() => {
+    if (!posts.length) return;
+    
     setAnimatingPosts(true);
     
     setTimeout(() => {
-      if (activeCategory === "Всички") {
-        setVisiblePosts(blogPosts);
+      if (activeCategory === "all") {
+        setVisiblePosts(posts);
       } else {
-        setVisiblePosts(blogPosts.filter(post => post.category === activeCategory));
+        const categoryId = categories.find(cat => cat.slug === activeCategory)?.id;
+        setVisiblePosts(posts.filter(post => 
+          categoryId ? post.categories.includes(categoryId) : true
+        ));
       }
       setAnimatingPosts(false);
     }, 300);
-  }, [activeCategory]);
+  }, [posts, activeCategory, categories]);
+
+  // Show errors
+  useEffect(() => {
+    if (postsError) {
+      toast({
+        variant: "destructive",
+        title: "Грешка при зареждане на статиите",
+        description: "Моля, опитайте по-късно или свържете се с администратора."
+      });
+    }
+  }, [postsError, toast]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -104,15 +94,6 @@ const Index = () => {
           <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto mb-8">
             Най-добрите отстъпки и промоции около теб – избери и спести!
           </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-green-500 hover:bg-green-600 text-white">
-              Близки оферти
-            </Button>
-            <Button className="bg-transparent border border-green-500 text-green-500 hover:bg-green-500/10">
-              Гласово търсене
-            </Button>
-          </div>
         </div>
       </section>
 
@@ -130,58 +111,83 @@ const Index = () => {
           </div>
 
           {/* Табове за категории */}
-          <Tabs defaultValue="Всички" className="w-full mb-8" onValueChange={setActiveCategory}>
-            <div className="flex justify-center mb-6">
-              <TabsList className="bg-gray-900/70 p-1">
-                {categories.map((category, index) => (
-                  <TabsTrigger
-                    key={index}
-                    value={category}
-                    className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=inactive]:text-gray-400"
-                  >
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
-
-            {/* Съдържание за всеки таб */}
-            <TabsContent value={activeCategory} className="mt-0">
-              <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-300 ${animatingPosts ? 'opacity-0' : 'opacity-100'}`}>
-                {visiblePosts.map((post, index) => (
-                  <Link to={`/blog/${post.id}`} key={post.id} className="group">
-                    <Card className={`h-full bg-gray-900/60 border-gray-800 group-hover:border-green-500/50 transition-all duration-300 overflow-hidden transform group-hover:-translate-y-1 ${index === 0 && !isMobile ? 'md:col-span-2 md:row-span-2' : ''}`}>
-                      <div className={`relative overflow-hidden ${index === 0 && !isMobile ? 'md:h-64' : 'h-48'}`}>
-                        <img 
-                          src={post.imageUrl} 
-                          alt={post.title} 
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-70"></div>
-                        <Badge className="absolute top-3 left-3 bg-green-500/90 text-white border-none">{post.category}</Badge>
-                        <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-white/80">
-                          <Clock className="h-3 w-3" />
-                          <span>{post.date}</span>
-                        </div>
-                      </div>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl text-white group-hover:text-green-400 transition-colors duration-300">{post.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <CardDescription className="text-gray-400 line-clamp-2">{post.excerpt}</CardDescription>
-                      </CardContent>
-                      <CardFooter className="pt-0 flex justify-between items-center">
-                        <Button variant="link" className="p-0 text-green-500 group-hover:text-green-400 transition-colors flex items-center gap-1">
-                          Прочети повече
-                          <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </Link>
-                ))}
+          {!categoriesLoading && (
+            <Tabs defaultValue="all" className="w-full mb-8" onValueChange={setActiveCategory}>
+              <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
+                <TabsList className="bg-gray-900/70 p-1">
+                  {categories.map((category) => (
+                    <TabsTrigger
+                      key={category.id}
+                      value={category.slug}
+                      className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=inactive]:text-gray-400"
+                    >
+                      {category.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
               </div>
-            </TabsContent>
-          </Tabs>
+
+              {/* Съдържание за всеки таб */}
+              <TabsContent value={activeCategory} className="mt-0">
+                {postsLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[...Array(6)].map((_, i) => (
+                      <Card key={i} className="h-full bg-gray-900/60 border-gray-800 animate-pulse">
+                        <div className="h-48 bg-gray-800"></div>
+                        <CardHeader className="pb-2">
+                          <div className="h-6 bg-gray-800 rounded w-3/4"></div>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
+                          <div className="h-4 bg-gray-800 rounded w-5/6"></div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-300 ${animatingPosts ? 'opacity-0' : 'opacity-100'}`}>
+                    {visiblePosts.map((post, index) => (
+                      <Link to={`/blog/${post.id}/${post.slug}`} key={post.id} className="group">
+                        <Card className={`h-full bg-gray-900/60 border-gray-800 group-hover:border-green-500/50 transition-all duration-300 overflow-hidden transform group-hover:-translate-y-1 ${index === 0 && !isMobile ? 'md:col-span-2 md:row-span-2' : ''}`}>
+                          <div className={`relative overflow-hidden ${index === 0 && !isMobile ? 'md:h-64' : 'h-48'}`}>
+                            <img 
+                              src={getFeaturedImageUrl(post)} 
+                              alt={post.title.rendered} 
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent opacity-70"></div>
+                            <Badge className="absolute top-3 left-3 bg-green-500/90 text-white border-none">
+                              {getCategoryFromPost(post)}
+                            </Badge>
+                            <div className="absolute bottom-3 left-3 flex items-center gap-2 text-xs text-white/80">
+                              <Clock className="h-3 w-3" />
+                              <span>{formatWordPressDate(post.date)}</span>
+                            </div>
+                          </div>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-xl text-white group-hover:text-green-400 transition-colors duration-300">
+                              {post.title.rendered}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <CardDescription className="text-gray-400 line-clamp-2">
+                              {stripHtml(post.excerpt.rendered)}
+                            </CardDescription>
+                          </CardContent>
+                          <CardFooter className="pt-0 flex justify-between items-center">
+                            <Button variant="link" className="p-0 text-green-500 group-hover:text-green-400 transition-colors flex items-center gap-1">
+                              Прочети повече
+                              <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          )}
 
           <div className="text-center mt-10">
             <Link to="/blog">

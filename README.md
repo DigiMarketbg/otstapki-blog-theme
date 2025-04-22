@@ -1,73 +1,69 @@
-# Welcome to your Lovable project
 
-## Project info
+# Отстъпки БГ - WordPress интеграция
 
-**URL**: https://lovable.dev/projects/7061d1ff-7a8e-4fbe-b78a-cc883164829e
+## Настройка на WordPress
 
-## How can I edit this code?
+За успешна интеграция с WordPress API, трябва да се конфигурират следните настройки:
 
-There are several ways of editing your application.
+1. **REST API настройки**
+   - Уверете се, че WordPress REST API е активиран и достъпен
+   - Добавете CORS поддръжка, ако фронтенда и WordPress са на различни домейни
 
-**Use Lovable**
+2. **Нужни плъгини**
+   - Advanced Custom Fields (ACF) - за допълнителни полета
+   - ACF to REST API - за добавяне на ACF полета в REST API отговорите
+   - Yoast SEO - за по-добро SEO и метаданни
+   - Classic Editor или Gutenberg - според предпочитанията
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7061d1ff-7a8e-4fbe-b78a-cc883164829e) and start prompting.
+3. **Custom Fields за статиите**
+   - Препоръчително е да се добавят допълнителни полета за промоциите и отстъпките
+   - Чрез ACF може да добавите поле за процент отстъпка, начална и крайна дата и т.н.
 
-Changes made via Lovable will be committed automatically to this repo.
+## WordPress конфигурация за приложението
 
-**Use your preferred IDE**
+1. В `src/services/wordpressApi.ts` трябва да смените URL адреса със реалния WordPress адрес:
+   ```typescript
+   const baseUrl = "https://yourdomain.com/wp-json/wp/v2"; // Сменете с вашия WordPress URL
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. Убедете се, че в WordPress са създадени категориите, които използвате в приложението
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. За пълноценно SEO, настройте правилно Permalinks в WordPress да използват името на публикацията
 
-Follow these steps:
+## Миграция от Lovable към WordPress хостинг
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. **Експортиране на кода**
+   - Създайте копие на всички React файлове
+   - Уверете се, че имате правилно конфигуриран Vite или Webpack setup
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. **Интеграция с WordPress**
+   - Можете да използвате React приложението като отделна директория в WordPress
+   - Алтернативно, може да използвате плъгин като "WP REST API" за създаване на хедлес WordPress инсталация
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Конфигурация на рутове**
+   - Създайте правила за пренасочване в .htaccess файла или настройте WordPress permalink структурата
+   - Уверете се, че всички React рутове се обработват правилно
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Изисквания към WordPress админ панела
 
-**Edit a file directly in GitHub**
+1. **Създаване на статии**
+   - Използвайте стандартния WordPress интерфейс за публикации
+   - Обезателно добавяйте:
+     - Заглавие на статията
+     - Основно изображение (featured image)
+     - Категории
+     - Съдържание с форматиране
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+2. **Категории**
+   - Създайте всички необходими категории в WordPress
+   - Обезателно задайте slug, който съответства на използваните в приложението
 
-**Use GitHub Codespaces**
+## Допълнителни възможности
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **Кеширане**
+   - Използвайте WP Super Cache или подобен плъгин за по-бързо зареждане
+   - React приложението използва React Query, който също кешира заявките
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7061d1ff-7a8e-4fbe-b78a-cc883164829e) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+2. **Сигурност**
+   - При необходимост от custom endpoints, използвайте JWT Authentication
+   - Ограничете REST API достъпа само до необходимите endpoints

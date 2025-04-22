@@ -1,67 +1,82 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Search } from 'lucide-react';
-
-// Примерни блог статии
-const blogPosts = [
-  {
-    id: 1,
-    title: "10 начина да спестите от месечните разходи",
-    excerpt: "Открийте изпитани стратегии за намаляване на ежедневните разходи без да жертвате качеството на живот.",
-    category: "Съвети за пестене",
-    date: "21 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 2,
-    title: "Най-добрите намаления в хранителните вериги този месец",
-    excerpt: "Преглед на топ промоциите в големите хранителни вериги, които не трябва да пропускате през април.",
-    category: "Промоции",
-    date: "18 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 3,
-    title: "Как да намерите най-изгодните оферти за техника",
-    excerpt: "Експертни съвети за откриване на най-добрите намаления при покупка на смартфони, компютри и домакински уреди.",
-    category: "Технологии",
-    date: "15 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 4,
-    title: "Сезонни намаления - какво да купувате през пролетта",
-    excerpt: "Разберете кои продукти са най-изгодни за покупка през пролетния сезон и защо.",
-    category: "Сезонни оферти",
-    date: "10 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-  {
-    id: 5,
-    title: "5 често срещани грешки при използване на промоционални кодове",
-    excerpt: "Научете как да избегнете типичните капани при използване на ваучери и промо кодове онлайн.",
-    category: "Онлайн пазаруване",
-    date: "5 април, 2025",
-    imageUrl: "/placeholder.svg",
-  },
-];
-
-// Категории за блога
-const categories = [
-  "Всички",
-  "Промоции",
-  "Съвети за пестене",
-  "Онлайн пазаруване",
-  "Технологии",
-  "Сезонни оферти",
-];
+import { Search, Loader2 } from 'lucide-react';
+import { useWordPressPosts, useWordPressCategories, stripHtml, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { useToast } from "@/hooks/use-toast";
 
 const Blog = () => {
+  const { category } = useParams<{ category: string }>();
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Get category ID from slug if present
+  const { data: categoriesData = [] } = useWordPressCategories();
+  const selectedCategoryId = category 
+    ? categoriesData.find(cat => cat.slug === category)?.id 
+    : undefined;
+  
+  // Fetch posts for the selected category
+  const { 
+    data: posts = [],
+    isLoading: postsLoading, 
+    error: postsError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useWordPressPosts(selectedCategoryId);
+  
+  // Categories for display in the UI
+  const categories = [
+    { id: 0, name: "Всички", slug: "all" },
+    ...(categoriesData || []).map(cat => ({ 
+      id: cat.id, 
+      name: cat.name, 
+      slug: cat.slug 
+    }))
+  ];
+  
+  // Handle category click
+  const handleCategoryClick = (categorySlug: string) => {
+    if (categorySlug === 'all') {
+      navigate('/blog');
+    } else {
+      navigate(`/blog/category/${categorySlug}`);
+    }
+  };
+  
+  // Handle search form submit
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real implementation, you would navigate to a search results page
+    // or filter posts here based on the search query
+    if (searchQuery.trim()) {
+      toast({
+        title: "Търсене",
+        description: `Търсене на "${searchQuery}" ще бъде имплементирано в бъдеща версия.`
+      });
+    }
+  };
+  
+  // Show error if posts failed to load
+  React.useEffect(() => {
+    if (postsError) {
+      toast({
+        variant: "destructive",
+        title: "Грешка при зареждане на статиите",
+        description: "Моля, опитайте по-късно или свържете се с администратора."
+      });
+    }
+  }, [postsError, toast]);
+
+  // Filter for popular posts (in a real implementation, this would come from WP API)
+  const popularPosts = posts.slice(0, 2);
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Хедър */}
@@ -95,16 +110,18 @@ const Blog = () => {
           </p>
           
           {/* Търсачка */}
-          <div className="max-w-xl mx-auto relative">
+          <form onSubmit={handleSearch} className="max-w-xl mx-auto relative">
             <input
               type="text"
               placeholder="Търси статии, съвети, промоции..."
               className="w-full py-3 px-6 pr-12 rounded-full bg-gray-800 border border-green-500/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Button className="absolute right-1 top-1 rounded-full bg-green-500 hover:bg-green-600 p-2">
+            <Button type="submit" className="absolute right-1 top-1 rounded-full bg-green-500 hover:bg-green-600 p-2">
               <Search className="h-5 w-5" />
             </Button>
-          </div>
+          </form>
         </div>
       </section>
 
@@ -112,16 +129,17 @@ const Blog = () => {
       <section className="py-6 bg-gray-900/50">
         <div className="container mx-auto px-4">
           <div className="flex overflow-x-auto gap-4 pb-2 no-scrollbar">
-            {categories.map((category, index) => (
+            {categories.map((cat) => (
               <Button
-                key={index}
-                variant={index === 0 ? "default" : "outline"}
-                className={index === 0 
+                key={cat.id}
+                variant={(!category && cat.slug === 'all') || cat.slug === category ? "default" : "outline"}
+                className={(!category && cat.slug === 'all') || cat.slug === category
                   ? "bg-green-500 hover:bg-green-600 text-white whitespace-nowrap" 
                   : "border-green-500/50 text-green-500 hover:bg-green-500/10 whitespace-nowrap"
                 }
+                onClick={() => handleCategoryClick(cat.slug)}
               >
-                {category}
+                {cat.name}
               </Button>
             ))}
           </div>
@@ -131,43 +149,81 @@ const Blog = () => {
       {/* Блог статии */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold mb-10 border-l-4 border-green-500 pl-4">Последни публикации</h2>
+          <h2 className="text-3xl font-bold mb-10 border-l-4 border-green-500 pl-4">
+            {category 
+              ? categories.find(cat => cat.slug === category)?.name || "Статии"
+              : "Последни публикации"
+            }
+          </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
-              <Card key={post.id} className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden hover:shadow-lg hover:shadow-green-500/10">
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={post.imageUrl} 
-                    alt={post.title} 
-                    className="w-full h-full object-cover transition hover:scale-105"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="flex justify-between items-center mb-2">
-                    <Badge variant="outline" className="text-green-400 border-green-400/30">
-                      {post.category}
-                    </Badge>
-                    <span className="text-gray-400 text-sm">{post.date}</span>
-                  </div>
-                  <CardTitle className="text-xl hover:text-green-500 transition">{post.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-400">{post.excerpt}</CardDescription>
-                </CardContent>
-                <CardFooter className="flex justify-between">
-                  <Button variant="link" className="text-green-500 hover:text-green-400 p-0">
-                    Прочети повече
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+          {postsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="bg-gray-900 border-gray-800 animate-pulse">
+                  <div className="h-48 bg-gray-800"></div>
+                  <CardHeader>
+                    <div className="h-6 bg-gray-800 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-800 rounded w-1/3"></div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
+                    <div className="h-4 bg-gray-800 rounded w-5/6"></div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {posts.map((post) => (
+                <Link to={`/blog/${post.id}/${post.slug}`} key={post.id}>
+                  <Card className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden hover:shadow-lg hover:shadow-green-500/10">
+                    <div className="h-48 overflow-hidden">
+                      <img 
+                        src={getFeaturedImageUrl(post)} 
+                        alt={post.title.rendered} 
+                        className="w-full h-full object-cover transition hover:scale-105"
+                      />
+                    </div>
+                    <CardHeader>
+                      <div className="flex justify-between items-center mb-2">
+                        <Badge variant="outline" className="text-green-400 border-green-400/30">
+                          {getCategoryFromPost(post)}
+                        </Badge>
+                        <span className="text-gray-400 text-sm">{formatWordPressDate(post.date)}</span>
+                      </div>
+                      <CardTitle className="text-xl hover:text-green-500 transition" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="text-gray-400">{stripHtml(post.excerpt.rendered)}</CardDescription>
+                    </CardContent>
+                    <CardFooter className="flex justify-between">
+                      <Button variant="link" className="text-green-500 hover:text-green-400 p-0">
+                        Прочети повече
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
           
           <div className="mt-12 text-center">
-            <Button className="bg-green-500 hover:bg-green-600 text-white">
-              Зареди още статии
-            </Button>
+            {hasNextPage && (
+              <Button 
+                className="bg-green-500 hover:bg-green-600 text-white"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Зареждане...
+                  </>
+                ) : (
+                  'Зареди още статии'
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </section>
@@ -177,34 +233,58 @@ const Blog = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-10 border-l-4 border-green-500 pl-4">Популярни публикации</h2>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {blogPosts.slice(0, 2).map((post) => (
-              <Card key={post.id} className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-2/5 h-48 md:h-auto overflow-hidden">
-                    <img 
-                      src={post.imageUrl} 
-                      alt={post.title} 
-                      className="w-full h-full object-cover transition hover:scale-105"
-                    />
-                  </div>
-                  <div className="md:w-3/5 p-6">
-                    <Badge variant="outline" className="text-green-400 border-green-400/30 mb-2">
-                      {post.category}
-                    </Badge>
-                    <h3 className="text-xl font-bold mb-2 hover:text-green-500 transition">{post.title}</h3>
-                    <p className="text-gray-400 mb-4">{post.excerpt}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-sm">{post.date}</span>
-                      <Button variant="link" className="text-green-500 hover:text-green-400 p-0">
-                        Прочети повече
-                      </Button>
+          {postsLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {[...Array(2)].map((_, i) => (
+                <Card key={i} className="bg-gray-900 border-gray-800 animate-pulse">
+                  <div className="flex flex-col md:flex-row">
+                    <div className="md:w-2/5 h-48 bg-gray-800"></div>
+                    <div className="md:w-3/5 p-6">
+                      <div className="h-4 bg-gray-800 rounded w-1/4 mb-2"></div>
+                      <div className="h-6 bg-gray-800 rounded w-3/4 mb-4"></div>
+                      <div className="h-4 bg-gray-800 rounded w-full mb-2"></div>
+                      <div className="h-4 bg-gray-800 rounded w-5/6 mb-4"></div>
+                      <div className="flex justify-between">
+                        <div className="h-4 bg-gray-800 rounded w-1/4"></div>
+                        <div className="h-4 bg-gray-800 rounded w-1/4"></div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {popularPosts.map((post) => (
+                <Link to={`/blog/${post.id}/${post.slug}`} key={post.id}>
+                  <Card className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden">
+                    <div className="flex flex-col md:flex-row">
+                      <div className="md:w-2/5 h-48 md:h-auto overflow-hidden">
+                        <img 
+                          src={getFeaturedImageUrl(post)} 
+                          alt={post.title.rendered} 
+                          className="w-full h-full object-cover transition hover:scale-105"
+                        />
+                      </div>
+                      <div className="md:w-3/5 p-6">
+                        <Badge variant="outline" className="text-green-400 border-green-400/30 mb-2">
+                          {getCategoryFromPost(post)}
+                        </Badge>
+                        <h3 className="text-xl font-bold mb-2 hover:text-green-500 transition" dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+                        <p className="text-gray-400 mb-4">{stripHtml(post.excerpt.rendered)}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400 text-sm">{formatWordPressDate(post.date)}</span>
+                          <Button variant="link" className="text-green-500 hover:text-green-400 p-0">
+                            Прочети повече
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

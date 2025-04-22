@@ -1,140 +1,81 @@
-
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, Clock, Percent, Tag, User } from 'lucide-react';
-
-// Примерни блог статии
-const blogPosts = [
-  {
-    id: 1,
-    title: "10 начина да спестите от месечните разходи",
-    excerpt: "Открийте изпитани стратегии за намаляване на ежедневните разходи без да жертвате качеството на живот.",
-    content: `
-      <p>В наши дни, когато цените постоянно растат, намирането на начини за спестяване на пари от месечните разходи е особено важно. В тази статия ще разгледаме 10 ефективни стратегии, които могат да помогнат на всяко домакинство да оптимизира бюджета си.</p>
-      
-      <h2>1. Планирайте пазаруването предварително</h2>
-      <p>Спонтанното пазаруване често води до ненужни покупки. Направете списък с необходимите продукти и се придържайте към него. Проверявайте седмичните брошури и планирайте менюто си според намаленията.</p>
-      
-      <h2>2. Използвайте приложения за намаления</h2>
-      <p>Приложения като Отстъпки БГ могат да ви помогнат да откриете най-добрите промоции около вас. Редовното използване на подобни инструменти може да доведе до значителни спестявания в дългосрочен план.</p>
-      
-      <h2>3. Оптимизирайте енергийното потребление</h2>
-      <p>Сметките за електричество, вода и отопление съставляват голяма част от месечните разходи. Използването на енергоспестяващи крушки, изключването на електроуреди от контакта, когато не се използват, и разумното използване на вода могат да намалят сметките ви с 10-20%.</p>
-      
-      <h2>4. Преразгледайте абонаментите си</h2>
-      <p>Проверете всички месечни абонаменти - стрийминг услуги, телевизия, телефон, интернет, фитнес и т.н. Анализирайте дали наистина използвате всички тези услуги и дали не можете да намерите по-изгодни пакети.</p>
-      
-      <h2>5. Приготвяйте храна вкъщи</h2>
-      <p>Храненето навън е удобно, но скъпо. Отделете време за приготвяне на храна вкъщи. Можете да приготвяте по-големи количества и да замразявате за по-късно, което спестява и време, и пари.</p>
-      
-      <h2>6. Използвайте промоционални кодове при онлайн пазаруване</h2>
-      <p>Преди да завършите онлайн покупка, потърсете промоционални кодове за съответния магазин. Сайтове и приложения като Отстъпки БГ често предлагат актуални кодове, които могат да намалят крайната цена с 5-30%.</p>
-      
-      <h2>7. Преминете към собствена марка продукти</h2>
-      <p>Продуктите с марката на търговските вериги често са произведени от същите производители като известните марки, но на по-ниска цена. Тествайте различни продукти и вижте къде не забелязвате разлика в качеството.</p>
-      
-      <h2>8. Използвайте обществен транспорт или споделено пътуване</h2>
-      <p>Разходите за гориво, паркинг и поддръжка на автомобил са значителни. Когато е възможно, използвайте обществен транспорт, велосипед или споделено пътуване.</p>
-      
-      <h2>9. Планирайте големи покупки според сезонните намаления</h2>
-      <p>Различните продукти имат различни цикли на намаление. Електроника след нови модели, дрехи в края на сезона, мебели преди нови колекции. Планирайте големите покупки според тези цикли.</p>
-      
-      <h2>10. Създайте бюджет и го следвайте</h2>
-      <p>И най-важното - създайте ясен месечен бюджет, който включва всички ваши разходи и спестявания. Следете го редовно и правете корекции, когато е необходимо.</p>
-      
-      <p>Прилагането на тези стратегии може да доведе до значителни спестявания в дългосрочен план, без да се налага да правите големи жертви в начина си на живот. Започнете с малки промени и постепенно изграждайте нови навици за пестене.</p>
-    `,
-    category: "Съвети за пестене",
-    author: "Мария Иванова",
-    date: "21 април, 2025",
-    readTime: "7 мин",
-    imageUrl: "/placeholder.svg",
-    discountPercentage: "20%",
-    relatedPosts: [2, 5, 3]
-  },
-  {
-    id: 2,
-    title: "Най-добрите намаления в хранителните вериги този месец",
-    excerpt: "Преглед на топ промоциите в големите хранителни вериги, които не трябва да пропускате през април.",
-    content: `<p>Подробно съдържание за статия 2...</p>`,
-    category: "Промоции",
-    author: "Петър Петров",
-    date: "18 април, 2025",
-    readTime: "5 мин",
-    imageUrl: "/placeholder.svg",
-    discountPercentage: "30%",
-    relatedPosts: [1, 4, 5]
-  },
-  {
-    id: 3,
-    title: "Как да намерите най-изгодните оферти за техника",
-    excerpt: "Експертни съвети за откриване на най-добрите намаления при покупка на смартфони, компютри и домакински уреди.",
-    content: `<p>Подробно съдържание за статия 3...</p>`,
-    category: "Технологии",
-    author: "Стефан Тодоров",
-    date: "15 април, 2025",
-    readTime: "8 мин",
-    imageUrl: "/placeholder.svg",
-    discountPercentage: "15%",
-    relatedPosts: [2, 5, 1]
-  },
-  {
-    id: 4,
-    title: "Сезонни намаления - какво да купувате през пролетта",
-    excerpt: "Разберете кои продукти са най-изгодни за покупка през пролетния сезон и защо.",
-    content: `<p>Подробно съдържание за статия 4...</p>`,
-    category: "Сезонни оферти",
-    author: "Виктория Димитрова",
-    date: "10 април, 2025",
-    readTime: "6 мин",
-    imageUrl: "/placeholder.svg",
-    discountPercentage: "25%",
-    relatedPosts: [1, 2, 3]
-  },
-  {
-    id: 5,
-    title: "5 често срещани грешки при използване на промоционални кодове",
-    excerpt: "Научете как да избегнете типичните капани при използване на ваучери и промо кодове онлайн.",
-    content: `<p>Подробно съдържание за статия 5...</p>`,
-    category: "Онлайн пазаруване",
-    author: "Николай Иванов",
-    date: "5 април, 2025",
-    readTime: "4 мин",
-    imageUrl: "/placeholder.svg",
-    discountPercentage: "10%",
-    relatedPosts: [1, 2, 3]
-  },
-];
-
-// Функция за създаване на SEO URL
-const createSeoUrl = (title) => {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\sа-яА-Я]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-а-яА-Я]/g, '')
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
-};
+import { useWordPressPost, useWordPressPosts, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft, Clock, User, Loader2 } from 'lucide-react';
 
 const BlogPost = () => {
-  const { id } = useParams<{ id: string }>();
-  const postId = parseInt(id || "1");
-  
-  // Намиране на статията по ID
-  const post = blogPosts.find(p => p.id === postId) || blogPosts[0];
-  
-  // Намиране на свързани статии
-  const relatedArticles = post.relatedPosts.map(id => 
-    blogPosts.find(p => p.id === id)
-  ).filter(Boolean);
+  const { id, seoTitle } = useParams<{ id: string, seoTitle?: string }>();
+  const postId = parseInt(id || '0');
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // Генериране на SEO URL за статията
-  const seoUrl = createSeoUrl(post.title);
+  // Fetch the current post
+  const { 
+    data: post, 
+    isLoading, 
+    error 
+  } = useWordPressPost(postId);
+
+  // Fetch related posts (in a real implementation, you'd use tags or categories)
+  const { data: relatedPosts = [] } = useWordPressPosts();
+
+  // Handle loading and errors
+  React.useEffect(() => {
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Грешка при зареждане на статията",
+        description: "Статията не може да бъде намерена или е възникнала грешка."
+      });
+      navigate('/blog');
+    }
+  }, [error, navigate, toast]);
+
+  // Redirect to the SEO URL if it's not correct
+  React.useEffect(() => {
+    if (post && post.slug && (!seoTitle || seoTitle !== post.slug)) {
+      navigate(`/blog/${post.id}/${post.slug}`, { replace: true });
+    }
+  }, [post, seoTitle, navigate]);
+
+  // Filter out the current post from related posts and limit to 3
+  const filteredRelatedPosts = relatedPosts
+    .filter(relatedPost => relatedPost.id !== postId)
+    .slice(0, 3);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-green-500 mx-auto mb-4" />
+          <p className="text-gray-300">Зареждане на статията...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Статията не е намерена</h2>
+          <p className="text-gray-300 mb-6">Статията, която търсите, не съществува или е била премахната.</p>
+          <Button 
+            onClick={() => navigate('/blog')}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Към блога
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -157,212 +98,91 @@ const BlogPost = () => {
         </div>
       </header>
 
-      {/* Основно съдържание */}
-      <main className="py-12">
-        <article className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* Хлебни трохи */}
-            <div className="text-sm text-gray-400 mb-6">
-              <Link to="/" className="hover:text-green-500 transition">Начало</Link>
-              {" > "}
-              <Link to="/blog" className="hover:text-green-500 transition">Блог</Link>
-              {" > "}
-              <Link to={`/blog/category/${post.category}`} className="hover:text-green-500 transition">{post.category}</Link>
-              {" > "}
-              <span className="text-white">{seoUrl}</span>
-            </div>
-            
-            {/* Заглавие и мета информация */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">{post.title}</h1>
-            
-            {/* Дисконт етикет - нова функционалност */}
-            <div className="mb-6">
-              <div className="inline-block bg-gradient-to-r from-green-500 to-green-700 px-4 py-2 rounded-lg animate-pulse transform rotate-2 shadow-lg">
-                <div className="flex items-center gap-2">
-                  <Percent className="h-5 w-5 text-white" />
-                  <span className="text-white font-bold">Спести до {post.discountPercentage}</span>
-                  <Tag className="h-5 w-5 text-white" />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-wrap gap-4 mb-8">
-              <Badge variant="outline" className="text-green-400 border-green-400/30 flex items-center gap-1">
-                <User className="h-3 w-3" /> {post.author}
-              </Badge>
-              <Badge variant="outline" className="text-amber-400 border-amber-400/30 flex items-center gap-1">
-                <Calendar className="h-3 w-3" /> {post.date}
-              </Badge>
-              <Badge variant="outline" className="text-blue-400 border-blue-400/30 flex items-center gap-1">
-                <Clock className="h-3 w-3" /> {post.readTime} четене
-              </Badge>
-            </div>
-            
-            {/* Основно изображение */}
-            <div className="mb-8 rounded-xl overflow-hidden relative">
-              <img 
-                src={post.imageUrl} 
-                alt={post.title} 
-                className="w-full h-auto object-cover"
-              />
-              {/* Ефект за намаление върху изображението */}
-              <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full font-bold transform rotate-12 shadow-lg border-2 border-white">
-                -{post.discountPercentage}
-              </div>
-            </div>
-            
-            {/* Съдържание на статията */}
-            <div 
-              className="prose prose-lg prose-invert max-w-none prose-headings:text-green-500 prose-a:text-green-400 prose-strong:text-white prose-blockquote:border-green-500 prose-blockquote:text-gray-300 prose-hr:border-gray-800"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-            
-            {/* Тагове и споделяне */}
-            <div className="mt-12 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="secondary" className="bg-gray-800 hover:bg-gray-700">
-                  {post.category}
-                </Badge>
-                <Badge variant="secondary" className="bg-gray-800 hover:bg-gray-700">
-                  Спестяване
-                </Badge>
-                <Badge variant="secondary" className="bg-gray-800 hover:bg-gray-700">
-                  Бюджет
-                </Badge>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <span className="text-gray-400">Споделете:</span>
-                <a href="#" className="text-gray-400 hover:text-green-500 transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" />
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-green-500 transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-green-500 transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fillRule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 0 1 1.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z" clipRule="evenodd" />
-                  </svg>
-                </a>
-                <a href="#" className="text-gray-400 hover:text-green-500 transition">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M6.94 5a2 2 0 1 1-4-.002 2 2 0 0 1 4 .002ZM7 8.48H3V21h4V8.48Zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68Z" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-            
-            <Separator className="my-12 bg-gray-800" />
-            
-            {/* Автор */}
-            <div className="bg-gray-900 rounded-xl p-6 mb-12 flex flex-col md:flex-row gap-6 items-center">
-              <div className="w-24 h-24 rounded-full overflow-hidden">
-                <img 
-                  src="/placeholder.svg" 
-                  alt={post.author} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <h3 className="text-xl font-bold mb-2">{post.author}</h3>
-                <p className="text-gray-400 mb-3">
-                  Експерт по лични финанси и управление на бюджета с над 8 години опит в сферата
-                  на финансовите консултации.
-                </p>
-                <div className="flex gap-3 justify-center md:justify-start">
-                  <a href="#" className="text-green-500 hover:text-green-400 transition">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                    </svg>
-                  </a>
-                  <a href="#" className="text-green-500 hover:text-green-400 transition">
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M6.94 5a2 2 0 1 1-4-.002 2 2 0 0 1 4 .002ZM7 8.48H3V21h4V8.48Zm6.32 0H9.34V21h3.94v-6.57c0-3.66 4.77-4 4.77 0V21H22v-7.93c0-6.17-7.06-5.94-8.72-2.91l.04-1.68Z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
+      {/* Навигация назад */}
+      <div className="container mx-auto px-4 py-6">
+        <Button 
+          variant="ghost" 
+          className="text-gray-400 hover:text-white"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Назад
+        </Button>
+      </div>
+
+      {/* Съдържание на статията */}
+      <article className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Категория и дата */}
+          <div className="flex flex-wrap gap-3 items-center mb-4">
+            <Badge className="bg-green-500 text-white">
+              {getCategoryFromPost(post)}
+            </Badge>
+            <div className="flex items-center text-gray-400 text-sm">
+              <Clock className="mr-1 h-4 w-4" />
+              {formatWordPressDate(post.date)}
             </div>
           </div>
           
-          {/* Свързани статии */}
-          <section className="mt-16">
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-3xl font-bold mb-8 border-l-4 border-green-500 pl-4">
-                Свързани статии
-              </h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {relatedArticles.map((relatedPost) => (
-                  <Card key={relatedPost?.id} className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden group">
-                    <div className="h-48 overflow-hidden relative">
-                      <img 
-                        src={relatedPost?.imageUrl} 
-                        alt={relatedPost?.title} 
-                        className="w-full h-full object-cover transition group-hover:scale-105"
-                      />
-                      {/* Ефект за намаление върху изображението на свързаната статия */}
-                      <div className="absolute top-3 right-3 bg-green-500 text-white px-2 py-1 rounded-full font-bold transform rotate-12 shadow-lg border border-white text-sm">
-                        -{relatedPost?.discountPercentage}
-                      </div>
-                    </div>
-                    <CardHeader>
-                      <div className="flex justify-between items-center mb-2">
-                        <Badge variant="outline" className="text-green-400 border-green-400/30">
-                          {relatedPost?.category}
-                        </Badge>
-                        <span className="text-gray-400 text-sm">{relatedPost?.date}</span>
-                      </div>
-                      <CardTitle className="text-xl hover:text-green-500 transition">
-                        <Link to={`/blog/${relatedPost?.id}/${createSeoUrl(relatedPost?.title || '')}`}>{relatedPost?.title}</Link>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <CardDescription className="text-gray-400">{relatedPost?.excerpt}</CardDescription>
-                    </CardContent>
-                    <CardFooter className="flex justify-between">
-                      <Link to={`/blog/${relatedPost?.id}/${createSeoUrl(relatedPost?.title || '')}`}>
-                        <div className="text-green-500 hover:text-green-400 flex items-center gap-2">
-                          <Percent className="h-4 w-4" />
-                          <span>Виж намалението</span>
-                        </div>
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
+          {/* Заглавие */}
+          <h1 
+            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6"
+            dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+          />
           
-          {/* Абонамент */}
-          <section className="py-16 mt-16 bg-gradient-to-t from-black to-green-950/10">
-            <div className="container mx-auto px-4 text-center">
-              <h2 className="text-3xl font-bold mb-4">
-                <span className="text-white">Абонирайте се за нашия </span>
-                <span className="text-green-500">бюлетин</span>
-              </h2>
-              <p className="text-gray-300 max-w-2xl mx-auto mb-8">
-                Получавайте най-новите статии и промоции директно във вашата поща. Никакъм спам, само най-полезната информация!
-              </p>
-              
-              <div className="max-w-md mx-auto flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Вашият имейл адрес"
-                  className="flex-1 py-3 px-4 rounded-l-lg bg-gray-800 border border-green-500/30 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500/50"
-                />
-                <Button className="bg-green-500 hover:bg-green-600 text-white rounded-r-lg">
-                  Абонирай се
-                </Button>
-              </div>
+          {/* Главно изображение */}
+          <div className="rounded-lg overflow-hidden mb-8 relative">
+            <img 
+              src={getFeaturedImageUrl(post)} 
+              alt={post.title.rendered} 
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          
+          {/* Съдържание */}
+          <div 
+            className="prose prose-lg prose-invert max-w-none mb-12 post-content"
+            dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+          />
+        </div>
+      </article>
+
+      {/* Подобни статии */}
+      {filteredRelatedPosts.length > 0 && (
+        <section className="bg-gray-900/30 py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold mb-10 border-l-4 border-green-500 pl-4">Подобни статии</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {filteredRelatedPosts.map((relatedPost) => (
+                <Link to={`/blog/${relatedPost.id}/${relatedPost.slug}`} key={relatedPost.id}>
+                  <Card className="bg-gray-900 border-gray-800 hover:border-green-500/50 transition overflow-hidden h-full">
+                    <div className="h-48 overflow-hidden">
+                      <img 
+                        src={getFeaturedImageUrl(relatedPost)} 
+                        alt={relatedPost.title.rendered} 
+                        className="w-full h-full object-cover transition hover:scale-105"
+                      />
+                    </div>
+                    <CardContent className="p-6">
+                      <Badge variant="outline" className="text-green-400 border-green-400/30 mb-2">
+                        {getCategoryFromPost(relatedPost)}
+                      </Badge>
+                      <h3 
+                        className="text-xl font-bold mb-2 hover:text-green-500 transition line-clamp-2"
+                        dangerouslySetInnerHTML={{ __html: relatedPost.title.rendered }}
+                      />
+                      <div className="flex justify-between items-center text-sm text-gray-400">
+                        <span>{formatWordPressDate(relatedPost.date)}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
             </div>
-          </section>
-        </article>
-      </main>
+          </div>
+        </section>
+      )}
 
       {/* Футър */}
       <footer className="bg-gray-900 text-gray-400 py-12 border-t border-green-500/20">
@@ -412,11 +232,11 @@ const BlogPost = () => {
             <div>
               <h3 className="text-white font-bold mb-4">Категории</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-green-500 transition">Промоции</a></li>
-                <li><a href="#" className="hover:text-green-500 transition">Съвети за пестене</a></li>
-                <li><a href="#" className="hover:text-green-500 transition">Онлайн пазаруване</a></li>
-                <li><a href="#" className="hover:text-green-500 transition">Технологии</a></li>
-                <li><a href="#" className="hover:text-green-500 transition">Сезонни оферти</a></li>
+                {categories.filter(cat => cat !== "Всички").map((category, index) => (
+                  <li key={index}>
+                    <a href="#" className="hover:text-green-500 transition">{category}</a>
+                  </li>
+                ))}
               </ul>
             </div>
             
@@ -446,6 +266,93 @@ const BlogPost = () => {
           </div>
         </div>
       </footer>
+
+      {/* Стилове за WordPress съдържание */}
+      <style jsx global>{`
+        .post-content {
+          color: #e5e7eb;
+        }
+        .post-content h2 {
+          font-size: 1.875rem;
+          font-weight: 700;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
+          color: white;
+        }
+        .post-content h3 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+          color: white;
+        }
+        .post-content p {
+          margin-bottom: 1.25rem;
+          line-height: 1.7;
+        }
+        .post-content ul, .post-content ol {
+          margin-left: 1.5rem;
+          margin-bottom: 1.25rem;
+        }
+        .post-content li {
+          margin-bottom: 0.5rem;
+        }
+        .post-content a {
+          color: #10b981;
+          text-decoration: underline;
+        }
+        .post-content a:hover {
+          color: #34d399;
+        }
+        .post-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 0.375rem;
+          margin: 1.5rem 0;
+        }
+        .post-content blockquote {
+          border-left: 4px solid #10b981;
+          padding-left: 1rem;
+          font-style: italic;
+          margin: 1.5rem 0;
+          color: #9ca3af;
+        }
+        .post-content pre {
+          background-color: #1f2937;
+          padding: 1rem;
+          border-radius: 0.375rem;
+          overflow-x: auto;
+          margin: 1.5rem 0;
+        }
+        .post-content code {
+          background-color: #1f2937;
+          padding: 0.2rem 0.4rem;
+          border-radius: 0.25rem;
+          font-size: 0.875rem;
+        }
+        .post-content table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1.5rem 0;
+        }
+        .post-content th, .post-content td {
+          border: 1px solid #374151;
+          padding: 0.5rem;
+          text-align: left;
+        }
+        .post-content th {
+          background-color: #111827;
+        }
+        .post-content figure {
+          margin: 1.5rem 0;
+        }
+        .post-content figcaption {
+          text-align: center;
+          font-size: 0.875rem;
+          color: #9ca3af;
+          margin-top: 0.5rem;
+        }
+      `}</style>
     </div>
   );
 };
