@@ -8,8 +8,6 @@ import { useWordPressSiteSettings } from '@/services/api/hooks';
 const HeroSection = () => {
   const { data: siteSettings } = useWordPressSiteSettings();
 
-  const currentYear = new Date().getFullYear();
-
   return (
     <section className="relative overflow-hidden bg-black">
       {/* Dark overlay */}
@@ -60,29 +58,9 @@ const HeroSection = () => {
           Най-добрите отстъпки и промоции около теб – избери и спести!
         </p>
       </div>
-
-      {/* Footer area with flutter effect */}
-      <footer className="relative text-center py-6 bg-black/95 border-t border-gray-800 select-none">
-        <p className="text-gray-400 text-sm inline-block animate-[flutter_3s_ease-in-out_infinite]">
-          &copy; {currentYear} {siteSettings?.title || "otstapki.bg"}. Всички права запазени.{" "}
-          Изработено от{" "}
-          <Link to="https://webuslugi.bg" target="_blank" rel="noopener noreferrer" className="text-green-400 underline hover:text-green-600">
-            webuslugi.bg
-          </Link>
-        </p>
-      </footer>
-
-      {/* Add the flutter keyframes animation */}
-      <style>
-        {`
-          @keyframes flutter {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(-2deg); }
-          }
-        `}
-      </style>
     </section>
   );
 };
 
 export default HeroSection;
+
