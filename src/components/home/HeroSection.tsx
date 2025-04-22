@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Sparkles, BadgePercent, Percent, Discount } from "lucide-react";
+import { Sparkles, BadgePercent, Percent, BadgeDollarSign } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -14,7 +14,7 @@ const HeroSection = () => {
           <BadgePercent className="h-12 w-12 text-green-400/70" />
         </div>
         <div className="absolute w-48 h-48 rounded-full bg-green-500/5 bottom-10 right-[15%] animate-[pulse_6s_ease-in-out_infinite_1s] flex items-center justify-center">
-          <Discount className="h-16 w-16 text-green-400/60" />
+          <BadgeDollarSign className="h-16 w-16 text-green-400/60" />
         </div>
         <div className="absolute w-24 h-24 rounded-full bg-green-500/10 bottom-32 left-[20%] animate-[pulse_5s_ease-in-out_infinite_0.5s] flex items-center justify-center">
           <Percent className="h-8 w-8 text-green-400/70" />
@@ -62,3 +62,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+
