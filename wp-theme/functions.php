@@ -1,4 +1,3 @@
-
 <?php
 // Функции и настройки за темата OtstapkiBG Custom Theme
 
@@ -34,4 +33,17 @@ add_action( 'after_setup_theme', 'otstapkibg_register_menus' );
 // Поддръжка на featured images
 add_theme_support( 'post-thumbnails' );
 
+// Регистриране на sidebar
+function otstapkibg_widgets_init() {
+    register_sidebar( array(
+        'name'          => __( 'Sidebar', 'otstapkibg' ),
+        'id'            => 'sidebar-1',
+        'description'   => __( 'Добавяне на джаджи в страничната лента', 'otstapkibg' ),
+        'before_widget' => '<section id="%1$s" class="widget %2$s">',
+        'after_widget'  => '</section>',
+        'before_title'  => '<h3 class="widget-title">',
+        'after_title'   => '</h3>',
+    ) );
+}
+add_action( 'widgets_init', 'otstapkibg_widgets_init' );
 ?>
