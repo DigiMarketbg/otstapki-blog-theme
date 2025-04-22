@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWordPressSiteSettings } from '@/services/wordpressApi';
-
 const SiteHeader = () => {
   const location = useLocation();
   const {
@@ -11,12 +9,9 @@ const SiteHeader = () => {
       logo: "/lovable-uploads/6cbb2d8a-6ad4-48cf-bdd4-443bd16a25c8.png"
     }
   } = useWordPressSiteSettings();
-
   const isActive = (path: string) => location.pathname === path;
-
-  return (
-    <header className="bg-black py-4 border-b border-green-500/20">
-      <div className="container mx-auto px-4 flex flex-col md:flex-row justify-center md:justify-between items-center">
+  return <header className="bg-black py-4 border-b border-green-500/20">
+      <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-[8px]">
         <Link to="/" className="flex items-center gap-2 mb-4 md:mb-0">
           <img src={siteSettings.logo} alt={`${siteSettings.title} Лого`} className="h-13" />
         </Link>
@@ -30,19 +25,11 @@ const SiteHeader = () => {
             Блог
           </Link>
           {/* New external button */}
-          <a 
-            href="https://www.otstapki.bg" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4"
-          >
+          <a href="https://www.otstapki.bg" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4">
             Otstapki.bg
           </a>
         </nav>
       </div>
-    </header>
-  );
-}
-
+    </header>;
+};
 export default SiteHeader;
-
