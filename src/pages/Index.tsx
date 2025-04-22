@@ -7,7 +7,7 @@ import Footer from '@/components/Footer';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-black text-white">
+    <div className="min-h-screen flex flex-col bg-black text-white pb-[56px] md:pb-0">
       <SiteHeader />
       <main className="flex-grow">
         <HeroSection />
