@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Book, Box } from "lucide-react";
+import { Home, Book } from "lucide-react";
 
 const MobileBottomNav = () => {
   const location = useLocation();
@@ -9,7 +9,7 @@ const MobileBottomNav = () => {
     location.pathname === path || (path === "/blog" && location.pathname.startsWith("/blog"));
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-black border-t border-green-400/20 flex justify-around items-center py-2 md:hidden z-50">
+    <nav className="fixed bottom-0 left-0 right-0 bg-black border-t border-green-400/20 flex justify-around items-center py-1 md:hidden z-50">
       <Link
         to="/"
         className={`flex flex-col items-center text-xs ${
@@ -35,8 +35,12 @@ const MobileBottomNav = () => {
         className="flex flex-col items-center text-xs text-white hover:text-green-500"
         aria-label="Отстъпки Бг"
       >
-        <Box size={24} strokeWidth={1.8} className="mb-1 text-green-500" />
-        {/* Tекст като надпис под иконата */}
+        <img
+          src="/lovable-uploads/3bf85988-e296-42c8-81ff-abe0ad0d89db.png"
+          alt="Отстъпки Бг"
+          className="mb-1 w-6 h-6 object-contain"
+          style={{ filter: "invert(56%) sepia(90%) saturate(443%) hue-rotate(86deg) brightness(92%) contrast(87%)" }}
+        />
         Отстъпки Бг
       </a>
     </nav>

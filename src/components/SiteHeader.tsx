@@ -1,22 +1,33 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useWordPressSiteSettings } from '@/services/wordpressApi';
 import MobileBottomNav from './MobileBottomNav';
 import { Box } from 'lucide-react';
+
 const SiteHeader = () => {
   const location = useLocation();
   const {
     data: siteSettings = {
       title: "Отстъпки Бг",
-      logo: "/lovable-uploads/7934bc0c-3ab9-4821-979d-7c182551fd53.png"
+      logo: "/lovable-uploads/3bf85988-e296-42c8-81ff-abe0ad0d89db.png"
     }
   } = useWordPressSiteSettings();
   const isActive = (path: string) => location.pathname === path;
+
   return <>
       <header className="bg-black border-b border-green-400/20 py-2">
         <div className="container mx-auto flex flex-col md:flex-row justify-center md:justify-between items-center px-4">
-          <Link to="/" className="flex items-center gap-2 mb-4 md:mb-0 justify-center md:justify-start w-full md:w-auto">
-            <img src={siteSettings.logo} alt={`${siteSettings.title} Лого`} className="h-16 w-auto max-w-[178px] md:max-w-[64px] object-contain" />
+          <Link 
+            to="/" 
+            className="flex items-center gap-2 mb-4 md:mb-0 justify-center md:justify-start w-full md:w-auto"
+          >
+            <img 
+              src={siteSettings.logo} 
+              alt={`${siteSettings.title} Лого`} 
+              className="h-20 w-auto max-w-[178px] md:max-w-[128px] object-contain" 
+              style={{ filter: 'brightness(1.3) saturate(1.3)' }}
+            />
           </Link>
 
           {/* Centered navigation menu for desktop */}
@@ -29,7 +40,11 @@ const SiteHeader = () => {
             </Link>
             {/* New external button with icon */}
             <a href="https://www.otstapki.bg" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-500 transition border border-green-500 rounded px-3 py-1.5 ml-4 flex items-center gap-2" aria-label="Отстъпки Бг">
-              <Box size={20} strokeWidth={1.8} className="text-green-500" />
+              <img
+                src="/lovable-uploads/3bf85988-e296-42c8-81ff-abe0d89db.png"
+                alt="Отстъпки Бг"
+                className="w-6 h-6 object-contain"
+              />
               <span className="hidden md:inline">Отстъпки Бг</span>
             </a>
           </nav>
@@ -38,4 +53,5 @@ const SiteHeader = () => {
       <MobileBottomNav />
     </>;
 };
+
 export default SiteHeader;
