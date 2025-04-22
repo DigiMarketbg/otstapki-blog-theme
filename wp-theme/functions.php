@@ -1,3 +1,4 @@
+
 <?php
 // Функции и настройки за темата OtstapkiBG Custom Theme
 
@@ -46,4 +47,21 @@ function otstapkibg_widgets_init() {
     ) );
 }
 add_action( 'widgets_init', 'otstapkibg_widgets_init' );
+
+
+// Допълнителни регистрации (функции за CSS и JS от assets и менюта)
+
+function spasi_theme_setup() {
+  add_theme_support('menus');
+  add_theme_support('post-thumbnails');
+}
+add_action('after_setup_theme', 'spasi_theme_setup');
+
+function spasi_enqueue_styles() {
+  wp_enqueue_style('main-style', get_stylesheet_uri());
+  wp_enqueue_style('custom-css', get_template_directory_uri() . '/assets/css/style.css');
+  wp_enqueue_script('custom-js', get_template_directory_uri() . '/assets/js/main.js', array(), false, true);
+}
+add_action('wp_enqueue_scripts', 'spasi_enqueue_styles');
+
 ?>
