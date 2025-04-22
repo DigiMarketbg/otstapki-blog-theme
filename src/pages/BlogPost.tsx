@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Clock, User } from 'lucide-react';
 import SiteHeader from '@/components/SiteHeader';
+import Footer from '@/components/Footer';
 import { 
   useWordPressPost, 
   useWordPressCategories, 
@@ -57,10 +59,10 @@ const BlogPost = () => {
   }, [post, seoTitle, postId, navigate]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <SiteHeader />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-grow">
         {postLoading ? (
           <div className="max-w-4xl mx-auto">
             <div className="animate-pulse">
@@ -76,7 +78,6 @@ const BlogPost = () => {
           </div>
         ) : post ? (
           <>
-            {/* Back to Blog link */}
             <div className="max-w-4xl mx-auto mb-8">
               <Link to="/blog" className="inline-flex items-center text-green-500 hover:text-green-400">
                 <ChevronLeft className="h-4 w-4 mr-1" />
@@ -84,9 +85,7 @@ const BlogPost = () => {
               </Link>
             </div>
             
-            {/* Article Header */}
             <div className="max-w-4xl mx-auto mb-8">
-              {/* Category */}
               <Link 
                 to={`/blog/category/${
                   post._embedded?.['wp:term']?.[0]?.[0]?.slug || (categories[0]?.slug || '')
@@ -98,12 +97,10 @@ const BlogPost = () => {
                 </Badge>
               </Link>
               
-              {/* Title */}
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                 {post.title.rendered}
               </h1>
               
-              {/* Meta info */}
               <div className="flex items-center text-gray-400 mb-8">
                 <div className="flex items-center mr-6">
                   <Clock className="h-4 w-4 mr-2" />
@@ -112,7 +109,6 @@ const BlogPost = () => {
               </div>
             </div>
             
-            {/* Featured Image */}
             <div className="max-w-4xl mx-auto mb-8">
               <div className="relative rounded-lg overflow-hidden">
                 <img 
@@ -123,7 +119,6 @@ const BlogPost = () => {
               </div>
             </div>
             
-            {/* Article Content */}
             <div className="max-w-4xl mx-auto mb-16">
               <div 
                 className="prose prose-lg prose-invert prose-green max-w-none"
@@ -131,7 +126,6 @@ const BlogPost = () => {
               ></div>
             </div>
             
-            {/* Related Articles */}
             {relatedPosts.length > 0 && (
               <div className="max-w-4xl mx-auto mb-16">
                 <h2 className="text-2xl font-bold mb-6">
@@ -190,7 +184,6 @@ const BlogPost = () => {
         )}
       </div>
 
-      {/* Add some global styles for WordPress content */}
       <style>
         {`
           .prose img {
@@ -233,6 +226,7 @@ const BlogPost = () => {
           }
         `}
       </style>
+      <Footer />
     </div>
   );
 };

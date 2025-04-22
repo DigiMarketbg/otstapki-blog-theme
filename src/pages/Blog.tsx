@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronRight, Clock } from 'lucide-react';
 import SiteHeader from '@/components/SiteHeader';
+import Footer from '@/components/Footer';
 import { 
   useWordPressPosts, 
   useWordPressCategories, 
@@ -53,7 +53,7 @@ const Blog = () => {
   }, [error, toast]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       <SiteHeader />
 
       {/* Hero Section */}
@@ -114,7 +114,7 @@ const Blog = () => {
       </section>
 
       {/* Blog Posts Grid */}
-      <section className="py-12 bg-gradient-to-t from-black via-green-950/5 to-black">
+      <section className="py-12 bg-gradient-to-t from-black via-green-950/5 to-black flex-grow">
         <div className="container mx-auto px-4">
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -202,6 +202,7 @@ const Blog = () => {
           )}
         </div>
       </section>
+      <Footer />
     </div>
   );
 };
