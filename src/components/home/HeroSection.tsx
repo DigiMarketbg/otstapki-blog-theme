@@ -2,17 +2,39 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
+import { Sparkles, BadgePercent, Percent, Discount } from "lucide-react";
 
 const HeroSection = () => {
   return (
     <section className="py-24 bg-gradient-to-b from-black to-green-950/20 relative overflow-hidden">
       {/* Floating elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Green orbs */}
-        <div className="absolute w-32 h-32 rounded-full bg-green-500/10 top-10 left-[10%] animate-[pulse_4s_ease-in-out_infinite]"></div>
-        <div className="absolute w-48 h-48 rounded-full bg-green-500/5 bottom-10 right-[15%] animate-[pulse_6s_ease-in-out_infinite_1s]"></div>
-        <div className="absolute w-24 h-24 rounded-full bg-green-500/10 bottom-32 left-[20%] animate-[pulse_5s_ease-in-out_infinite_0.5s]"></div>
+        {/* Green orbs with icons */}
+        <div className="absolute w-32 h-32 rounded-full bg-green-500/10 top-10 left-[10%] animate-[pulse_4s_ease-in-out_infinite] flex items-center justify-center">
+          <BadgePercent className="h-12 w-12 text-green-400/70" />
+        </div>
+        <div className="absolute w-48 h-48 rounded-full bg-green-500/5 bottom-10 right-[15%] animate-[pulse_6s_ease-in-out_infinite_1s] flex items-center justify-center">
+          <Discount className="h-16 w-16 text-green-400/60" />
+        </div>
+        <div className="absolute w-24 h-24 rounded-full bg-green-500/10 bottom-32 left-[20%] animate-[pulse_5s_ease-in-out_infinite_0.5s] flex items-center justify-center">
+          <Percent className="h-8 w-8 text-green-400/70" />
+        </div>
+        
+        {/* Floating discount text elements */}
+        <div className="absolute top-[35%] left-[15%] animate-[float_20s_ease-in-out_infinite_2s]">
+          <div className="text-green-400/40 text-2xl font-bold rotate-[-15deg]">-30%</div>
+        </div>
+        <div className="absolute top-[20%] right-[20%] animate-[float_25s_ease-in-out_infinite]">
+          <div className="text-green-400/30 text-3xl font-bold rotate-[10deg]">-50%</div>
+        </div>
+        <div className="absolute bottom-[30%] right-[30%] animate-[float_18s_ease-in-out_infinite_3s]">
+          <div className="text-green-400/40 text-2xl font-bold rotate-[5deg]">-20%</div>
+        </div>
+        
+        {/* Website name floating */}
+        <div className="absolute bottom-[25%] left-[10%] animate-[float_22s_ease-in-out_infinite_1s]">
+          <div className="text-green-400/20 text-4xl font-bold">отстъпки.bg</div>
+        </div>
         
         {/* Floating particles */}
         <div className="absolute w-2 h-2 rounded-full bg-green-400/40 top-[30%] left-[25%] animate-[float_15s_ease-in-out_infinite]"></div>
