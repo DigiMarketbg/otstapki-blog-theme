@@ -16,51 +16,52 @@ export const fetchPosts = async (categoryId?: number, page: number = 1): Promise
     console.log(`Fetching posts from: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Failed to fetch posts');
+      console.error(`Failed to fetch posts: ${response.status} ${response.statusText}`);
+      return [];
     }
-    return await response.json();
+    const posts = await response.json();
+    console.log(`Successfully fetched ${posts.length} posts`);
+    return posts;
   } catch (error) {
     console.error("Error fetching WordPress posts:", error);
-    // For development, return mock data
-    return generateMockPosts(10, categoryId);
+    return [];
   }
 };
 
 // Function to fetch post by ID
-export const fetchPostById = async (id: number): Promise<WordPressPost> => {
+export const fetchPostById = async (id: number): Promise<WordPressPost | null> => {
   try {
     console.log(`Fetching post by ID: ${id}`);
     const response = await fetch(`${WP_API_BASE_URL}/posts/${id}?_embed`);
     if (!response.ok) {
-      throw new Error('Failed to fetch post');
+      console.error(`Failed to fetch post by ID: ${response.status} ${response.statusText}`);
+      return null;
     }
     return await response.json();
   } catch (error) {
     console.error("Error fetching WordPress post:", error);
-    // For development, return mock data
-    const mockPosts = generateMockPosts(10);
-    return mockPosts.find(post => post.id === id) || mockPosts[0];
+    return null;
   }
 };
 
 // Function to fetch post by slug
-export const fetchPostBySlug = async (slug: string): Promise<WordPressPost> => {
+export const fetchPostBySlug = async (slug: string): Promise<WordPressPost | null> => {
   try {
     console.log(`Fetching post by slug: ${slug}`);
     const response = await fetch(`${WP_API_BASE_URL}/posts?slug=${slug}&_embed`);
     if (!response.ok) {
-      throw new Error('Failed to fetch post');
+      console.error(`Failed to fetch post by slug: ${response.status} ${response.statusText}`);
+      return null;
     }
     const posts = await response.json();
     if (posts.length === 0) {
-      throw new Error('Post not found');
+      console.error(`Post not found with slug: ${slug}`);
+      return null;
     }
     return posts[0];
   } catch (error) {
     console.error("Error fetching WordPress post by slug:", error);
-    // For development, return mock data
-    const mockPosts = generateMockPosts(10);
-    return mockPosts.find(post => post.slug === slug) || mockPosts[0];
+    return null;
   }
 };
 
@@ -68,15 +69,17 @@ export const fetchPostBySlug = async (slug: string): Promise<WordPressPost> => {
 export const fetchCategories = async (): Promise<WordPressCategory[]> => {
   try {
     console.log(`Fetching categories`);
-    const response = await fetch(`${WP_API_BASE_URL}/categories`);
+    const response = await fetch(`${WP_API_BASE_URL}/categories?per_page=100`);
     if (!response.ok) {
-      throw new Error('Failed to fetch categories');
+      console.error(`Failed to fetch categories: ${response.status} ${response.statusText}`);
+      return [];
     }
-    return await response.json();
+    const categories = await response.json();
+    console.log(`Successfully fetched ${categories.length} categories`);
+    return categories;
   } catch (error) {
     console.error("Error fetching WordPress categories:", error);
-    // For development, return default categories
-    return defaultCategories;
+    return [];
   }
 };
 
@@ -84,15 +87,24 @@ export const fetchCategories = async (): Promise<WordPressCategory[]> => {
 export const fetchSiteSettings = async (): Promise<WordPressSiteSettings> => {
   try {
     console.log(`Fetching site settings`);
-    // Typically would use a custom endpoint or the REST API
-    const response = await fetch(`${WP_API_BASE_URL.replace('/wp/v2', '')}/wp/v2/settings`);
+    // We can use the root endpoint for settings or a specific endpoint if you have one
+    const response = await fetch(`${WP_API_BASE_URL.replace('/wp/v2', '')}`);
     if (!response.ok) {
-      throw new Error('Failed to fetch site settings');
+      console.error(`Failed to fetch site settings: ${response.status} ${response.statusText}`);
+      return defaultSiteSettings;
     }
-    return await response.json();
+    
+    const data = await response.json();
+    
+    // Extract relevant information from WordPress API response
+    return {
+      title: data.name || defaultSiteSettings.title,
+      description: data.description || defaultSiteSettings.description,
+      logo: defaultSiteSettings.logo, // WordPress API doesn't provide logo by default
+      favicon: defaultSiteSettings.favicon // WordPress API doesn't provide favicon by default
+    };
   } catch (error) {
     console.error("Error fetching WordPress site settings:", error);
-    // For development, return default settings
     return defaultSiteSettings;
   }
 };
@@ -113,10 +125,8 @@ export const fetchPostsInfinite = async ({ pageParam = 1, queryKey }: any): Prom
     };
   } catch (error) {
     console.error("Error fetching WordPress posts:", error);
-    // For development, return mock data
-    const posts = generateMockPosts(10, categoryId);
     return {
-      posts,
+      posts: [],
       nextPage: null
     };
   }

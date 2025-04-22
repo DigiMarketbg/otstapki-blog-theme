@@ -9,8 +9,6 @@ import {
 } from "@/services/api/hooks";
 import { useToast } from "@/hooks/use-toast";
 import PostsGrid from './PostsGrid';
-import { generateMockPosts } from '@/services/api/mockData';
-import { defaultCategories } from '@/services/api/mockData';
 
 const PostsSection = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -21,18 +19,15 @@ const PostsSection = () => {
   const { data: postsData, isLoading: postsLoading, error: postsError } = useWordPressPosts();
   const { data: categoriesData = [], isLoading: categoriesLoading } = useWordPressCategories();
 
-  // Create a fallback array of posts if the API request fails
-  const fallbackPosts = React.useMemo(() => generateMockPosts(6), []);
-
-  // Extract posts from infinite query data or use fallback
-  const posts = postsData?.pages?.flatMap(page => page.posts) || fallbackPosts;
+  // Extract posts from infinite query data or use empty array
+  const posts = postsData?.pages?.flatMap(page => page.posts) || [];
 
   console.log("PostsSection rendered with", posts.length, "posts");
 
-  // Format categories for display
+  // Format categories for display with "All" category
   const categories = [
     { id: 0, name: "Всички", slug: "all" },
-    ...(categoriesData.length > 0 ? categoriesData : defaultCategories).map(cat => ({ 
+    ...categoriesData.map(cat => ({ 
       id: cat.id, 
       name: cat.name, 
       slug: cat.slug 
@@ -44,7 +39,10 @@ const PostsSection = () => {
 
   // When posts or active category changes, filter posts
   useEffect(() => {
-    if (!posts.length) return;
+    if (!posts) {
+      setVisiblePosts([]);
+      return;
+    }
     
     setAnimatingPosts(true);
     

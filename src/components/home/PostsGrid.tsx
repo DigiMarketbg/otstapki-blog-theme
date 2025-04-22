@@ -39,8 +39,11 @@ const PostsGrid = ({ posts, isLoading, animating }: PostsGridProps) => {
   // If there are no posts, show a message
   if (posts.length === 0 && !isLoading) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-400">Няма налични статии в момента.</p>
+      <div className="text-center py-12 border border-gray-800 rounded-lg bg-gray-900/30 px-4">
+        <h3 className="text-2xl text-gray-400 mb-4">Няма публикувани статии</h3>
+        <p className="text-gray-500 mb-6">
+          В момента няма публикувани статии. Моля, проверете по-късно за нови публикации.
+        </p>
       </div>
     );
   }
