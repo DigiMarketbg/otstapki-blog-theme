@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import PostCard from './PostCard';
-import { WordPressPost } from '@/services/wordpressApi';
+import { WordPressPost } from '@/services/api/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PostsGridProps {
@@ -29,6 +29,18 @@ const PostsGrid = ({ posts, isLoading, animating }: PostsGridProps) => {
             </CardContent>
           </Card>
         ))}
+      </div>
+    );
+  }
+  
+  // Debug info
+  console.log("Rendering PostsGrid with", posts.length, "posts");
+  
+  // If there are no posts, show a message
+  if (posts.length === 0 && !isLoading) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-400">Няма налични статии в момента.</p>
       </div>
     );
   }

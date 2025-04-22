@@ -6,9 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   useWordPressPosts, 
   useWordPressCategories
-} from "@/services/wordpressApi";
+} from "@/services/api/hooks";
 import { useToast } from "@/hooks/use-toast";
 import PostsGrid from './PostsGrid';
+import { generateMockPosts } from '@/services/api/mockData';
+import { defaultCategories } from '@/services/api/mockData';
 
 const PostsSection = () => {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -19,13 +21,18 @@ const PostsSection = () => {
   const { data: postsData, isLoading: postsLoading, error: postsError } = useWordPressPosts();
   const { data: categoriesData = [], isLoading: categoriesLoading } = useWordPressCategories();
 
-  // Extract posts from infinite query data
-  const posts = postsData?.pages?.flatMap(page => page.posts) || [];
+  // Create a fallback array of posts if the API request fails
+  const fallbackPosts = React.useMemo(() => generateMockPosts(6), []);
+
+  // Extract posts from infinite query data or use fallback
+  const posts = postsData?.pages?.flatMap(page => page.posts) || fallbackPosts;
+
+  console.log("PostsSection rendered with", posts.length, "posts");
 
   // Format categories for display
   const categories = [
     { id: 0, name: "Всички", slug: "all" },
-    ...(categoriesData || []).map(cat => ({ 
+    ...(categoriesData.length > 0 ? categoriesData : defaultCategories).map(cat => ({ 
       id: cat.id, 
       name: cat.name, 
       slug: cat.slug 
@@ -79,32 +86,30 @@ const PostsSection = () => {
         </div>
 
         {/* Табове за категории */}
-        {!categoriesLoading && (
-          <Tabs defaultValue="all" className="w-full mb-8" onValueChange={setActiveCategory}>
-            <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
-              <TabsList className="bg-gray-900/70 p-1">
-                {categories.map((category) => (
-                  <TabsTrigger
-                    key={category.id}
-                    value={category.slug}
-                    className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=inactive]:text-gray-400"
-                  >
-                    {category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </div>
+        <Tabs defaultValue="all" className="w-full mb-8" onValueChange={setActiveCategory}>
+          <div className="flex justify-center mb-6 overflow-x-auto no-scrollbar">
+            <TabsList className="bg-gray-900/70 p-1">
+              {categories.map((category) => (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.slug}
+                  className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=inactive]:text-gray-400"
+                >
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
 
-            {/* Съдържание за всеки таб */}
-            <TabsContent value={activeCategory} className="mt-0">
-              <PostsGrid 
-                posts={visiblePosts} 
-                isLoading={postsLoading} 
-                animating={animatingPosts} 
-              />
-            </TabsContent>
-          </Tabs>
-        )}
+          {/* Съдържание за всеки таб */}
+          <TabsContent value={activeCategory} className="mt-0">
+            <PostsGrid 
+              posts={visiblePosts} 
+              isLoading={postsLoading && visiblePosts.length === 0} 
+              animating={animatingPosts} 
+            />
+          </TabsContent>
+        </Tabs>
 
         <div className="text-center mt-10">
           <Link to="/blog">

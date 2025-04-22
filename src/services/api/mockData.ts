@@ -1,85 +1,110 @@
 
 import { WordPressPost, WordPressSiteSettings, WordPressCategory } from './types';
 
-// Default category list for development
-export const defaultCategories: WordPressCategory[] = [
-  { id: 1, name: "Отстъпки", slug: "discounts" },
-  { id: 2, name: "Финанси", slug: "finance" },
-  { id: 3, name: "Технологии", slug: "technology" },
-  { id: 4, name: "Лайфстайл", slug: "lifestyle" }
-];
-
-// Default site settings for development
+// Default site settings
 export const defaultSiteSettings: WordPressSiteSettings = {
   title: "Отстъпки БГ",
-  description: "Открий най-добрите намаления",
+  description: "Открий най-добрите намаления и оферти",
   logo: "/lovable-uploads/6cbb2d8a-6ad4-48cf-bdd4-443bd16a25c8.png",
   favicon: "/favicon.ico"
 };
 
-// Mock data generation for development
-export function generateMockPost(id: number): WordPressPost {
-  const categoryId = Math.floor(Math.random() * 4) + 1;
-  const category = defaultCategories.find(cat => cat.id === categoryId) || defaultCategories[0];
-  
-  return {
-    id,
-    date: new Date().toISOString(),
-    title: {
-      rendered: `Примерна статия ${id}: Как да спестите пари с нашите промоции`
-    },
-    excerpt: {
-      rendered: '<p>Това е кратко резюме на статията, което описва основните точки и цели да привлече читателите...</p>'
-    },
-    content: {
-      rendered: `
-        <h2>Въведение</h2>
-        <p>Това е подробно съдържание на статията, което включва полезни съвети за спестяване на пари и намиране на най-добрите промоции.</p>
-        <h3>Първи съвет</h3>
-        <p>Следете редовно нашия сайт за най-новите отстъпки и промоции от водещи магазини и брандове.</p>
-        <h3>Втори съвет</h3>
-        <p>Абонирайте се за нашия бюлетин, за да получавате известия за ексклузивни оферти директно във вашата поща.</p>
-        <p>Използвайте промо код: <strong>SAVE20</strong> за допълнителна отстъпка от 20% при първа поръчка.</p>
-      `
-    },
-    slug: `primerna-statiya-${id}-kak-da-spestite-pari`,
-    featured_media: id,
-    categories: [categoryId],
-    _embedded: {
-      'wp:featuredmedia': [
-        {
-          source_url: '/placeholder.svg'
-        }
-      ],
-      'wp:term': [
-        [
-          {
-            id: categoryId,
-            name: category.name,
-            slug: category.slug
-          }
-        ]
-      ]
-    }
-  };
-}
+// Default categories
+export const defaultCategories: WordPressCategory[] = [
+  { id: 1, name: "Технологии", slug: "tech" },
+  { id: 2, name: "Мода", slug: "fashion" },
+  { id: 3, name: "Храна", slug: "food" },
+  { id: 4, name: "Пътувания", slug: "travel" },
+  { id: 5, name: "Здраве", slug: "health" }
+];
 
-export function generateMockPosts(count: number, categoryId?: number): WordPressPost[] {
-  return Array.from({ length: count }).map((_, index) => {
-    const post = generateMockPost(index + 1);
+// Generate Mock Posts with more realistic data
+export const generateMockPosts = (count: number = 10, categoryId?: number): WordPressPost[] => {
+  const posts: WordPressPost[] = [];
+  
+  const mockTitles = [
+    "Топ 10 намаления в технологичните магазини този месец",
+    "Къде да намерите най-изгодните летни дрехи",
+    "Промоции в супермаркетите този уикенд",
+    "Как да спестите от хотелско настаняване",
+    "Бюджетни оферти за здравословни продукти",
+    "Изгодни цени на електроника през април",
+    "Сезонни разпродажби на дрехи и обувки",
+    "Как да намерите отстъпки за почивка на море",
+    "Промоционални пакети за фитнес и спа",
+    "Най-добрите сделки за черен петък"
+  ];
+  
+  const mockExcerpts = [
+    "Разгледайте най-новите намаления в технологичните магазини и научете как да спестите до 50% при покупка на нови устройства...",
+    "Лятото наближава и е време за обновяване на гардероба. Вижте къде може да намерите качествени дрехи на ниски цени...",
+    "Планирате пазаруване? Вижте кои супермаркети предлагат най-добрите отстъпки този уикенд и спестете от хранителни продукти...",
+    "Научете как да резервирате хотел с до 30% отстъпка и да получите допълнителни екстри към престоя си без доплащане...",
+    "Здравословните продукти често са скъпи, но с тези съвети можете да ги намерите на много по-достъпни цени...",
+    "Планирате покупка на нов телефон или компютър? Вижте кои модели са с най-голями намаления през април...",
+    "Големите търговски вериги започнаха сезонните разпродажби. Научете къде можете да намерите най-добрите оферти...",
+    "С тези стратегии можете да намерите изгодни оферти за почивка на море и да спестите значителна сума...",
+    "Фитнес залите предлагат специални пакети за новите клиенти. Вижте къде може да тренирате на половин цена...",
+    "Черният петък наближава. Подгответе се с нашите съвети за избор на най-добрите оферти без излишно харчене..."
+  ];
+  
+  const mockContent = `
+    <h2>Защо да търсите отстъпки?</h2>
+    <p>Търсенето на отстъпки е чудесен начин да спестите пари без да жертвате качеството. Много магазини предлагат периодични намаления, от които можете да се възползвате с малко предварително планиране.</p>
     
-    if (categoryId) {
-      post.categories = [categoryId];
-      const category = defaultCategories.find(cat => cat.id === categoryId);
-      if (category && post._embedded && post._embedded['wp:term']) {
-        post._embedded['wp:term'][0] = [{
-          id: categoryId,
-          name: category.name,
-          slug: category.slug
-        }];
-      }
-    }
+    <h3>Как да намирате най-добрите оферти?</h3>
+    <p>Следвайки тези прости стъпки, можете значително да увеличите шансовете си за намиране на отлични отстъпки:</p>
+    <ul>
+      <li>Абонирайте се за бюлетини на любимите си магазини</li>
+      <li>Сравнявайте цени в различни търговски обекти</li>
+      <li>Пазарувайте извън пиковите сезони</li>
+      <li>Използвайте приложения за отстъпки и кешбек</li>
+    </ul>
     
-    return post;
-  });
-}
+    <h2>Най-добрите периоди за отстъпки</h2>
+    <p>Определени периоди от годината традиционно предлагат най-големите намаления:</p>
+    <ul>
+      <li>Черен петък и Кибер понеделник</li>
+      <li>Януарски и летни разпродажби</li>
+      <li>Край на сезона (за дрехи и сезонни стоки)</li>
+      <li>Периоди преди излизане на нови модели (за електроника)</li>
+    </ul>
+    
+    <p>Не забравяйте да сравнявате цените и да преценявате дали отстъпката наистина си струва. Понякога "намалените" продукти всъщност не са толкова изгодни, колкото изглеждат на пръв поглед.</p>
+  `;
+
+  for (let i = 0; i < count; i++) {
+    // If categoryId is specified, only create posts for that category
+    const postCategoryId = categoryId || defaultCategories[i % defaultCategories.length].id;
+    
+    posts.push({
+      id: i + 1,
+      date: new Date(Date.now() - i * 86400000 * 3).toISOString(), // Different dates for each post
+      title: {
+        rendered: mockTitles[i % mockTitles.length]
+      },
+      excerpt: {
+        rendered: `<p>${mockExcerpts[i % mockExcerpts.length]}</p>`
+      },
+      content: {
+        rendered: mockContent
+      },
+      slug: mockTitles[i % mockTitles.length]
+        .toLowerCase()
+        .replace(/[^\wа-яА-Я\s]/gi, '')
+        .replace(/\s+/g, '-'),
+      featured_media: i + 1,
+      _embedded: {
+        "wp:featuredmedia": [{
+          source_url: `/public/placeholder.svg` // Use placeholder image
+        }],
+        "wp:term": [[
+          defaultCategories.find(cat => cat.id === postCategoryId) || defaultCategories[0]
+        ]]
+      },
+      categories: [postCategoryId]
+    });
+  }
+  
+  return posts;
+};

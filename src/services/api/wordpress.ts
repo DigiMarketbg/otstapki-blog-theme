@@ -1,6 +1,6 @@
 
 import { WordPressPost, WordPressSiteSettings, WordPressCategory } from './types';
-import { defaultSiteSettings, generateMockPosts } from './mockData';
+import { defaultSiteSettings, defaultCategories, generateMockPosts } from './mockData';
 
 const WP_API_BASE_URL = "https://yourdomain.com/wp-json/wp/v2";
 
@@ -13,6 +13,7 @@ export const fetchPosts = async (categoryId?: number, page: number = 1): Promise
   }
   
   try {
+    console.log(`Fetching posts from: ${url}`);
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
@@ -21,13 +22,14 @@ export const fetchPosts = async (categoryId?: number, page: number = 1): Promise
   } catch (error) {
     console.error("Error fetching WordPress posts:", error);
     // For development, return mock data
-    return generateMockPosts(5, categoryId);
+    return generateMockPosts(10, categoryId);
   }
 };
 
 // Function to fetch post by ID
 export const fetchPostById = async (id: number): Promise<WordPressPost> => {
   try {
+    console.log(`Fetching post by ID: ${id}`);
     const response = await fetch(`${WP_API_BASE_URL}/posts/${id}?_embed`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
@@ -36,13 +38,15 @@ export const fetchPostById = async (id: number): Promise<WordPressPost> => {
   } catch (error) {
     console.error("Error fetching WordPress post:", error);
     // For development, return mock data
-    return generateMockPosts(1)[0];
+    const mockPosts = generateMockPosts(10);
+    return mockPosts.find(post => post.id === id) || mockPosts[0];
   }
 };
 
 // Function to fetch post by slug
 export const fetchPostBySlug = async (slug: string): Promise<WordPressPost> => {
   try {
+    console.log(`Fetching post by slug: ${slug}`);
     const response = await fetch(`${WP_API_BASE_URL}/posts?slug=${slug}&_embed`);
     if (!response.ok) {
       throw new Error('Failed to fetch post');
@@ -55,13 +59,15 @@ export const fetchPostBySlug = async (slug: string): Promise<WordPressPost> => {
   } catch (error) {
     console.error("Error fetching WordPress post by slug:", error);
     // For development, return mock data
-    return generateMockPosts(1)[0];
+    const mockPosts = generateMockPosts(10);
+    return mockPosts.find(post => post.slug === slug) || mockPosts[0];
   }
 };
 
 // Function to fetch categories from WordPress
 export const fetchCategories = async (): Promise<WordPressCategory[]> => {
   try {
+    console.log(`Fetching categories`);
     const response = await fetch(`${WP_API_BASE_URL}/categories`);
     if (!response.ok) {
       throw new Error('Failed to fetch categories');
@@ -70,13 +76,14 @@ export const fetchCategories = async (): Promise<WordPressCategory[]> => {
   } catch (error) {
     console.error("Error fetching WordPress categories:", error);
     // For development, return default categories
-    return Array.from(require('./mockData').defaultCategories);
+    return defaultCategories;
   }
 };
 
 // Function to fetch site settings from WordPress
 export const fetchSiteSettings = async (): Promise<WordPressSiteSettings> => {
   try {
+    console.log(`Fetching site settings`);
     // Typically would use a custom endpoint or the REST API
     const response = await fetch(`${WP_API_BASE_URL.replace('/wp/v2', '')}/wp/v2/settings`);
     if (!response.ok) {
@@ -98,6 +105,7 @@ export const fetchPostsInfinite = async ({ pageParam = 1, queryKey }: any): Prom
   const [_, categoryId] = queryKey;
   
   try {
+    console.log(`Fetching posts infinite, page: ${pageParam}, category: ${categoryId}`);
     const posts = await fetchPosts(categoryId, pageParam);
     return { 
       posts, 
@@ -106,7 +114,7 @@ export const fetchPostsInfinite = async ({ pageParam = 1, queryKey }: any): Prom
   } catch (error) {
     console.error("Error fetching WordPress posts:", error);
     // For development, return mock data
-    const posts = generateMockPosts(5, categoryId);
+    const posts = generateMockPosts(10, categoryId);
     return {
       posts,
       nextPage: null
