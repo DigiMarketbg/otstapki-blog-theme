@@ -3,7 +3,6 @@ import React from 'react';
 import SiteHeader from '@/components/SiteHeader';
 import HeroSection from '@/components/home/HeroSection';
 import PostsSection from '@/components/home/PostsSection';
-import BlogInfoSection from '@/components/home/BlogInfoSection';
 
 const Index = () => {
   return (
@@ -11,7 +10,6 @@ const Index = () => {
       <SiteHeader />
       <HeroSection />
       <PostsSection />
-      <BlogInfoSection />
     </div>
   );
 };
