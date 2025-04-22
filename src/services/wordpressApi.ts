@@ -1,4 +1,3 @@
-
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 // Interface for WordPress post data
@@ -29,6 +28,14 @@ export interface WordPressPost {
   categories: number[];
 }
 
+// Interface for site settings
+export interface WordPressSiteSettings {
+  title: string;
+  description: string;
+  logo: string;
+  favicon: string;
+}
+
 // Default category list for development
 export const defaultCategories = [
   { id: 1, name: "Отстъпки", slug: "discounts" },
@@ -36,6 +43,14 @@ export const defaultCategories = [
   { id: 3, name: "Технологии", slug: "technology" },
   { id: 4, name: "Лайфстайл", slug: "lifestyle" }
 ];
+
+// Default site settings for development
+export const defaultSiteSettings = {
+  title: "Отстъпки БГ",
+  description: "Открий най-добрите намаления",
+  logo: "/lovable-uploads/6cbb2d8a-6ad4-48cf-bdd4-443bd16a25c8.png",
+  favicon: "/favicon.ico"
+};
 
 // Function to fetch posts from WordPress
 export const fetchPosts = async (categoryId?: number, page: number = 1): Promise<WordPressPost[]> => {
@@ -56,6 +71,24 @@ export const fetchPosts = async (categoryId?: number, page: number = 1): Promise
     console.error("Error fetching WordPress posts:", error);
     // For development, return mock data
     return generateMockPosts(5, categoryId);
+  }
+};
+
+// Function to fetch site settings from WordPress
+export const fetchSiteSettings = async (): Promise<WordPressSiteSettings> => {
+  const baseUrl = "https://yourdomain.com/wp-json"; // Replace with your WordPress URL
+  
+  try {
+    // Typically would use a custom endpoint or the REST API
+    const response = await fetch(`${baseUrl}/wp/v2/settings`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch site settings');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching WordPress site settings:", error);
+    // For development, return default settings
+    return defaultSiteSettings;
   }
 };
 
@@ -83,55 +116,12 @@ export const fetchPostsInfinite = async ({ pageParam = 1, queryKey }: any): Prom
   }
 };
 
-// Function to fetch a single post by ID
-export const fetchPostById = async (id: number): Promise<WordPressPost | null> => {
-  const baseUrl = "https://yourdomain.com/wp-json/wp/v2"; // Replace with your WordPress URL
-  
-  try {
-    const response = await fetch(`${baseUrl}/posts/${id}?_embed`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch post');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching WordPress post:", error);
-    // For development, return mock data
-    return generateMockPost(id);
-  }
-};
-
-// Function to fetch a single post by slug
-export const fetchPostBySlug = async (slug: string): Promise<WordPressPost | null> => {
-  const baseUrl = "https://yourdomain.com/wp-json/wp/v2"; // Replace with your WordPress URL
-  
-  try {
-    const response = await fetch(`${baseUrl}/posts?slug=${slug}&_embed`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch post');
-    }
-    const posts = await response.json();
-    return posts.length > 0 ? posts[0] : null;
-  } catch (error) {
-    console.error("Error fetching WordPress post by slug:", error);
-    return null;
-  }
-};
-
-// Function to fetch categories
-export const fetchCategories = async () => {
-  const baseUrl = "https://yourdomain.com/wp-json/wp/v2"; // Replace with your WordPress URL
-  
-  try {
-    const response = await fetch(`${baseUrl}/categories`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch categories');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching WordPress categories:", error);
-    // For development, return default categories
-    return defaultCategories;
-  }
+// React Query hook for site settings
+export const useWordPressSiteSettings = () => {
+  return useQuery({
+    queryKey: ['site-settings'],
+    queryFn: fetchSiteSettings,
+  });
 };
 
 // React Query hook for posts (infinite scroll)

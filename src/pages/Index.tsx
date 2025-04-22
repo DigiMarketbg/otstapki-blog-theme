@@ -5,9 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronRight, Clock, User } from 'lucide-react';
+import { ChevronRight, Clock } from 'lucide-react';
+import SiteHeader from '@/components/SiteHeader';
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useWordPressPosts, useWordPressCategories, stripHtml, formatWordPressDate, getCategoryFromPost, getFeaturedImageUrl } from "@/services/wordpressApi";
+import { 
+  useWordPressPosts, 
+  useWordPressCategories, 
+  stripHtml, 
+  formatWordPressDate, 
+  getCategoryFromPost, 
+  getFeaturedImageUrl 
+} from "@/services/wordpressApi";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -17,8 +25,11 @@ const Index = () => {
   const { toast } = useToast();
 
   // Fetch posts and categories
-  const { data: posts = [], isLoading: postsLoading, error: postsError } = useWordPressPosts();
+  const { data: postsData, isLoading: postsLoading, error: postsError } = useWordPressPosts();
   const { data: categoriesData = [], isLoading: categoriesLoading } = useWordPressCategories();
+
+  // Extract posts from infinite query data
+  const posts = postsData?.pages?.flatMap(page => page.posts) || [];
 
   // Format categories for display
   const categories = [
@@ -31,7 +42,7 @@ const Index = () => {
   ];
 
   // Filter posts by category
-  const [visiblePosts, setVisiblePosts] = useState(posts);
+  const [visiblePosts, setVisiblePosts] = useState([]);
 
   // When posts or active category changes, filter posts
   useEffect(() => {
@@ -65,24 +76,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Хедър */}
-      <header className="bg-black py-4 border-b border-green-500/20">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2">
-            <img 
-              src="/lovable-uploads/2ef37924-9ab4-43ad-9b1f-cb1a6780ce3d.png" 
-              alt="Отстъпки БГ Лого" 
-              className="h-10"
-            />
-            <span className="text-green-500 font-bold text-xl">Отстъпки БГ</span>
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-green-500 border-b-2 border-green-500 pb-1">Начало</Link>
-            <Link to="/blog" className="text-white hover:text-green-500 transition">Блог</Link>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Херо секция */}
       <section className="py-24 bg-gradient-to-b from-black to-green-950/20">
