@@ -5,53 +5,14 @@
   <div class="container mx-auto px-4 max-w-5xl">
     <header class="page-header text-center mb-8">
       <h1 class="text-3xl md:text-5xl font-bold mb-4">
-        <span class="text-white">
-          <?php
-          if (is_category()) :
-            _e('Статии в категория', 'otstapkibg');
-            echo ': </span><span class="text-green-500">' . single_cat_title('', false);
-          elseif (is_tag()) :
-            _e('Статии с таг', 'otstapkibg');
-            echo ': </span><span class="text-green-500">' . single_tag_title('', false);
-          elseif (is_author()) :
-            _e('Статии от автор', 'otstapkibg');
-            echo ': </span><span class="text-green-500">' . get_the_author();
-          elseif (is_date()) :
-            if (is_day()) {
-              echo get_the_date();
-            } elseif (is_month()) {
-              echo get_the_date('F Y');
-            } elseif (is_year()) {
-              echo get_the_date('Y');
-            }
-          else :
-            _e('Архиви', 'otstapkibg');
-          endif;
-          ?>
-        </span>
+        <span class="text-white"><?php _e('Резултати от търсене за', 'otstapkibg'); ?>: </span>
+        <span class="text-green-500">"<?php echo get_search_query(); ?>"</span>
       </h1>
-      <p class="text-gray-300 max-w-2xl mx-auto">
-        <?php _e('Открийте полезна информация, съвети и стратегии за намиране на най-добрите оферти', 'otstapkibg'); ?>
-      </p>
     </header>
 
-    <!-- Categories Navigation -->
-    <div class="categories-nav py-6 bg-gray-900/60 mb-8 rounded">
-      <div class="flex items-center justify-center gap-2 md:gap-4 flex-wrap px-4">
-        <a href="<?php echo get_permalink(get_option('page_for_posts')); ?>" class="button button-outline">
-          <?php _e('Всички', 'otstapkibg'); ?>
-        </a>
-        
-        <?php 
-        $categories = get_categories(array('hide_empty' => true));
-        foreach ($categories as $category) :
-          $current = is_category() && get_queried_object_id() === $category->term_id;
-        ?>
-          <a href="<?php echo get_category_link($category->term_id); ?>" class="button <?php echo $current ? 'bg-green-500' : 'button-outline'; ?>">
-            <?php echo $category->name; ?>
-          </a>
-        <?php endforeach; ?>
-      </div>
+    <!-- Search Form -->
+    <div class="search-form-container mb-10 max-w-xl mx-auto">
+      <?php get_search_form(); ?>
     </div>
 
     <?php if (have_posts()) : ?>
@@ -110,13 +71,13 @@
       </div>
 
     <?php else : ?>
-      <!-- No Posts Found -->
+      <!-- No Results Found -->
       <div class="text-center py-12">
-        <h3 class="text-2xl text-gray-400 mb-4"><?php _e('Няма намерени статии', 'otstapkibg'); ?></h3>
+        <h3 class="text-2xl text-gray-400 mb-4"><?php _e('Не са намерени резултати', 'otstapkibg'); ?></h3>
         <p class="text-gray-500 mb-6">
-          <?php _e('В момента няма публикувани статии в тази категория.', 'otstapkibg'); ?>
+          <?php _e('Не са намерени резултати за вашето търсене. Моля, опитайте с други ключови думи.', 'otstapkibg'); ?>
         </p>
-        <a href="<?php echo get_permalink(get_option('page_for_posts')); ?>" class="button bg-green-500">
+        <a href="<?php echo home_url('/blog/'); ?>" class="button bg-green-500">
           <?php _e('Към всички статии', 'otstapkibg'); ?>
         </a>
       </div>

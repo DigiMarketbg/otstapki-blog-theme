@@ -1,51 +1,77 @@
 
 <?php get_header(); ?>
 
-<main id="site-content" role="main" class="relative overflow-hidden bg-black">
-  <div class="absolute inset-0 bg-black/90 pointer-events-none"></div>
+<main id="site-content" role="main" class="relative z-10 py-12">
+  <div class="container mx-auto px-4 max-w-4xl">
+    <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
+      <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+        <header class="entry-header mb-8">
+          <h1 class="text-3xl font-bold mb-4"><?php the_title(); ?></h1>
+          <div class="text-gray-400 flex items-center gap-4 mb-6">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span><?php echo get_the_date(); ?></span>
+            </div>
+            <?php 
+            $category = get_the_category(); 
+            if ($category) : 
+            ?>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              <a href="<?php echo get_category_link($category[0]->term_id); ?>" class="text-green-500 hover:underline">
+                <?php echo esc_html($category[0]->name); ?>
+              </a>
+            </div>
+            <?php endif; ?>
+          </div>
+        </header>
 
-  <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute w-32 h-32 rounded-full bg-green-100/5 top-10 left-[10%] animate-[pulse_6s_ease-in-out_infinite] flex items-center justify-center">
-      <svg class="h-12 w-12 text-green-300/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6m5-10h-6m-4 0H7m6-4V2m-2 0v4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="absolute w-48 h-48 rounded-full bg-green-100/3 bottom-10 right-[15%] animate-[pulse_8s_ease-in-out_infinite_1s] flex items-center justify-center">
-      <svg class="h-16 w-16 text-green-300/15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10h-6m-4 0H3m9-4V2m-2 0v4m5 6v6m2-6h6m-4 4v-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="absolute w-24 h-24 rounded-full bg-green-100/5 bottom-32 left-[20%] animate-[pulse_7s_ease-in-out_infinite_0.5s] flex items-center justify-center">
-      <svg class="h-8 w-8 text-green-300/20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
+        <?php if (has_post_thumbnail()) : ?>
+        <div class="post-thumbnail mb-8">
+          <?php the_post_thumbnail('featured-large', array('class' => 'w-full h-auto rounded')); ?>
+        </div>
+        <?php endif; ?>
 
-    <div class="absolute top-[35%] left-[15%] animate-[float_20s_ease-in-out_infinite_2s]">
-      <div class="text-green-300/5 text-2xl font-bold rotate-[-15deg]">-30%</div>
-    </div>
-    <div class="absolute top-[20%] right-[20%] animate-[float_25s_ease-in-out_infinite]">
-      <div class="text-green-300/7 text-3xl font-bold rotate-[10deg]">-50%</div>
-    </div>
-    <div class="absolute bottom-[30%] right-[30%] animate-[float_18s_ease-in-out_infinite_3s]">
-      <div class="text-green-300/5 text-2xl font-bold rotate-[5deg]">-20%</div>
-    </div>
+        <div class="entry-content prose prose-lg prose-invert prose-green max-w-none mb-8">
+          <?php the_content(); ?>
+        </div>
 
-    <div class="absolute bottom-[25%] left-[10%] animate-[float_22s_ease-in-out_infinite_1s]">
-      <div class="text-green-300/10 text-4xl font-bold">otstapki.bg</div>
-    </div>
+        <footer class="entry-footer">
+          <?php if (has_tag()) : ?>
+          <div class="post-tags flex flex-wrap gap-2 mb-6">
+            <?php the_tags('<div class="text-gray-400 mr-2">' . __('Тагове:', 'otstapkibg') . '</div>', ''); ?>
+          </div>
+          <?php endif; ?>
+          
+          <div class="post-navigation flex justify-between items-center border-t border-gray-800 pt-6 mt-8">
+            <div>
+              <?php previous_post_link('%link', '<span class="text-gray-400 text-sm block mb-1">' . __('Предишна статия', 'otstapkibg') . '</span> &laquo; %title'); ?>
+            </div>
+            <div class="text-right">
+              <?php next_post_link('%link', '<span class="text-gray-400 text-sm block mb-1">' . __('Следваща статия', 'otstapkibg') . '</span>%title &raquo;'); ?>
+            </div>
+          </div>
+        </footer>
+      </article>
 
-    <div class="absolute w-2 h-2 rounded-full bg-green-300/10 top-[30%] left-[25%] animate-[float_15s_ease-in-out_infinite]"></div>
-    <div class="absolute w-3 h-3 rounded-full bg-green-300/8 top-[20%] right-[35%] animate-[float_18s_ease-in-out_infinite_2s]"></div>
-    <div class="absolute w-2 h-2 rounded-full bg-green-300/10 bottom-[35%] right-[15%] animate-[float_20s_ease-in-out_infinite_1s]"></div>
-    <div class="absolute w-2 h-2 rounded-full bg-green-300/10 bottom-[25%] left-[40%] animate-[float_12s_ease-in-out_infinite_3s]"></div>
+      <?php
+      // If comments are open or we have at least one comment, load up the comment template.
+      if (comments_open() || get_comments_number()) :
+        comments_template();
+      endif;
+      ?>
 
-    <div class="absolute w-[150px] h-[500px] bg-gradient-to-t from-green-300/0 to-green-300/10 rotate-[30deg] top-[-100px] left-[20%] animate-[float-slow_30s_ease-in-out_infinite]"></div>
-    <div class="absolute w-[150px] h-[500px] bg-gradient-to-t from-green-300/0 to-green-300/10 rotate-[-30deg] top-[-200px] right-[30%] animate-[float-slow_25s_ease-in-out_infinite_5s]"></div>
-  </div>
-
-  <div class="container mx-auto px-4 text-center relative z-10 py-24 prose max-w-5xl">
-    <?php 
-      if ( have_posts() ) : 
-        while ( have_posts() ) : the_post();
-          the_content();
-        endwhile; 
-      endif; 
-    ?>
+    <?php endwhile; ?>
+    <?php else : ?>
+      <div class="text-center text-gray-400">
+        <?php _e('Статията не е намерена.', 'otstapkibg'); ?>
+        <div class="mt-6">
+          <a href="<?php echo home_url('/blog/'); ?>" class="button">
+            <?php _e('Назад към блога', 'otstapkibg'); ?>
+          </a>
+        </div>
+      </div>
+    <?php endif; ?>
   </div>
 </main>
 

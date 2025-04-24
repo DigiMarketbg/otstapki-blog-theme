@@ -1,2 +1,345 @@
 
-/* Основен CSS стил за темата. Можете да добавите вашите персонализирани стилове тук. */
+/* Допълнителни стилове за темата */
+
+/* Tailwind-like Utilities */
+.container {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+/* Flex Utilities */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-6 {
+    gap: 1.5rem;
+}
+
+/* Spacing */
+.my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+/* Typography */
+.text-center {
+    text-align: center;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+}
+
+.text-4xl {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-white {
+    color: white;
+}
+
+.text-gray-300 {
+    color: #D1D5DB;
+}
+
+.text-gray-400 {
+    color: #9CA3AF;
+}
+
+.text-green-500 {
+    color: #10B981;
+}
+
+/* Layout Elements */
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.z-10 {
+    z-index: 10;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+/* Backgrounds */
+.bg-black {
+    background-color: #000;
+}
+
+.bg-gray-900\/60 {
+    background-color: rgba(17, 24, 39, 0.6);
+}
+
+.bg-green-500 {
+    background-color: #10B981;
+}
+
+/* Borders */
+.border {
+    border-width: 1px;
+}
+
+.border-gray-800 {
+    border-color: #1F2937;
+}
+
+.border-t {
+    border-top-width: 1px;
+}
+
+/* Blog Content Styling */
+.prose {
+    max-width: 65ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    color: #10B981;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.prose p {
+    margin-bottom: 1rem;
+    color: #D1D5DB;
+    line-height: 1.6;
+}
+
+.prose ul, .prose ol {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    color: #D1D5DB;
+}
+
+.prose li {
+    margin-bottom: 0.5rem;
+}
+
+.prose img {
+    border-radius: 0.25rem;
+    max-width: 100%;
+    height: auto;
+    margin: 1rem 0;
+}
+
+.prose blockquote {
+    border-left: 4px solid #10B981;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #D1D5DB;
+    margin: 1.5rem 0;
+}
+
+/* Card Component */
+.card {
+    background-color: rgba(17, 24, 39, 0.6);
+    border: 1px solid #1F2937;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-0.25rem);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.card-header {
+    padding: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.card-content {
+    padding: 0 1rem;
+}
+
+.card-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: white;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.card:hover .card-title {
+    color: #10B981;
+}
+
+.card-description {
+    color: #9CA3AF;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Buttons */
+.button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #10B981;
+    color: white;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #059669;
+}
+
+.button-outline {
+    background-color: transparent;
+    border: 1px solid #4B5563;
+    color: #D1D5DB;
+}
+
+.button-outline:hover {
+    background-color: #1F2937;
+    color: white;
+}
+
+/* Grid System */
+.grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 768px) {
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

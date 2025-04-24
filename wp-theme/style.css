@@ -1,38 +1,69 @@
+
 /*
 Theme Name: OtstapkiBG Custom Theme
-Theme URI: https://blog.otstapki.bg/
-Author: Вашето Име
-Author URI: https://yourwebsite.example.com/
-Description: Персонализирана тема за OtstapkiBG съвместима с Elementor.
-Version: 1.0
-License: GNU General Public License v2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Theme URI: https://www.otstapki.bg/
+Author: OtstapkiBG Team
+Author URI: https://www.otstapki.bg/
+Description: Персонализирана тема за OtstapkiBG съвместима с Elementor и React интеграция.
+Version: 1.0.0
+License: GNU General Public License v3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain: otstapkibg
-Tags: custom, elementor, responsive, blog
+Tags: custom, elementor, responsive, blog, otstapki, ecommerce
+
+Тази тема е създадена за блога на OtstapkiBG и включва интеграция с React приложение.
 */
-/* Добавяме основно стилизиране за header, footer и съдържание */
+
+/* Основни стилове */
+:root {
+    --primary-color: #10B981;
+    --primary-hover: #059669;
+    --text-light: #FFFFFF;
+    --text-muted: #9CA3AF; 
+    --bg-dark: #000000;
+    --bg-card: rgba(17, 24, 39, 0.6);
+    --border-dark: #374151;
+}
 
 body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding: 0;
-    background: #fff;
-    color: #333;
+    background: var(--bg-dark);
+    color: var(--text-light);
 }
 
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* Header and Footer */
 #site-header, #site-footer {
-    background-color: #f3f3f3;
+    background-color: rgba(0, 0, 0, 0.95);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
     padding: 1rem;
     text-align: center;
 }
 
+#site-footer {
+    border-bottom: none;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+}
+
 .site-branding a {
-    color: #333;
+    color: var(--text-light);
     font-weight: bold;
     font-size: 1.5rem;
     text-decoration: none;
 }
 
+/* Navigation */
 #primary-navigation ul {
     list-style: none;
     margin: 0;
@@ -44,47 +75,51 @@ body {
 
 #primary-navigation a {
     text-decoration: none;
-    color: #333;
+    color: var(--text-light);
     font-weight: 600;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
 }
 
 #primary-navigation a:hover,
 #primary-navigation a:focus {
-    color: #ff7373;
+    color: var(--primary-color);
     outline: none;
 }
 
+/* Content */
 .site-info {
     font-size: 0.875rem;
-    color: #666;
+    color: var(--text-muted);
 }
 
 main#site-content {
-    max-width: 720px;
-    padding: 1rem;
+    max-width: 1200px;
+    padding: 2rem 1rem;
     margin: auto;
 }
 
+/* Blog Posts */
 .entry-title a {
-    color: #222;
+    color: var(--text-light);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     text-decoration: none;
 }
 
 .entry-title a:hover,
 .entry-title a:focus {
-    color: #ff5050;
+    color: var(--primary-color);
     outline: none;
 }
 
 .entry-summary {
     margin-top: 0.5rem;
-    color: #444;
+    color: var(--text-muted);
 }
 
 .entry-footer a {
-    color: #ff7373;
+    color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
 }
@@ -92,4 +127,60 @@ main#site-content {
 .entry-footer a:hover,
 .entry-footer a:focus {
     text-decoration: underline;
+}
+
+/* Buttons */
+.wp-block-button__link {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.wp-block-button__link:hover {
+    background-color: var(--primary-hover);
+    color: var(--text-light);
+}
+
+/* Tailwind-like Background Effects */
+.bg-gradient {
+    position: relative;
+}
+
+.bg-gradient::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.9));
+    z-index: -1;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #primary-navigation ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    main#site-content {
+        padding: 1rem;
+    }
+}
+
+/* Animation Classes */
+.animate-float {
+    animation: float 20s ease-in-out infinite;
+}
+
+.animate-pulse {
+    animation: pulse 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+    animation: float-slow 30s ease-in-out infinite;
 }
